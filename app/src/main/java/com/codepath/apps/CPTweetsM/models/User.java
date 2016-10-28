@@ -7,6 +7,7 @@ public class User {
     private String name;
     private long uid;
     private String screenName;
+    private String profileImageUrl;
 
     public String getName() {
         return name;
@@ -24,7 +25,6 @@ public class User {
         return profileImageUrl;
     }
 
-    private String profileImageUrl;
 
     public static User fromJSON(JSONObject jsonObject){
         User u = new User();
@@ -34,6 +34,7 @@ public class User {
             u.screenName = jsonObject.getString("screen_name");
             u.profileImageUrl = jsonObject.getString("profile_image_url");
             u.uid = jsonObject.getLong("id");
+            u.profileImageUrl = jsonObject.getString("profile_image_url_https");
         } catch (JSONException e) {
             e.printStackTrace();
         }

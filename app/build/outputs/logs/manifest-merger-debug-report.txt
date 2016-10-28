@@ -21,13 +21,14 @@ MERGED from [com.codepath.libraries:android-oauth-handler:1.1.0] /Users/chmanish
 MERGED from [com.android.support:appcompat-v7:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.0/AndroidManifest.xml:21:5-23:78
 MERGED from [com.android.support:animated-vector-drawable:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.2.0/AndroidManifest.xml:20:5-44
 MERGED from [com.android.support:support-vector-drawable:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.2.0/AndroidManifest.xml:21:5-43
+MERGED from [com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta1] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.github.Raizlabs.DBFlow/dbflow/4.0.0-beta1/AndroidManifest.xml:7:5-9:41
+MERGED from [com.android.support:recyclerview-v7:23.4.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.4.0/AndroidManifest.xml:20:5-43
 MERGED from [com.android.support:support-v4:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.0/AndroidManifest.xml:21:5-23:54
 MERGED from [com.android.support:support-fragment:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.0/AndroidManifest.xml:21:5-23:60
 MERGED from [com.android.support:support-core-utils:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.0/AndroidManifest.xml:21:5-23:61
 MERGED from [com.android.support:support-media-compat:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.0/AndroidManifest.xml:21:5-23:63
 MERGED from [com.android.support:support-core-ui:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.0/AndroidManifest.xml:21:5-23:58
 MERGED from [com.android.support:support-compat:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.0/AndroidManifest.xml:21:5-23:58
-MERGED from [com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta1] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.github.Raizlabs.DBFlow/dbflow/4.0.0-beta1/AndroidManifest.xml:7:5-9:41
 	tools:overrideLibrary
 		ADDED from [com.android.support:appcompat-v7:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.0/AndroidManifest.xml:23:9-75
 	android:targetSdkVersion
@@ -59,13 +60,13 @@ ADDED from /Users/chmanish/Projects/CodePath/CPTweetsM/app/src/main/AndroidManif
 MERGED from [com.android.support:appcompat-v7:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:animated-vector-drawable:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.2.0/AndroidManifest.xml:22:5-20
 MERGED from [com.android.support:support-vector-drawable:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.2.0/AndroidManifest.xml:23:5-20
+MERGED from [com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta1] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.github.Raizlabs.DBFlow/dbflow/4.0.0-beta1/AndroidManifest.xml:11:5-20
 MERGED from [com.android.support:support-v4:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-fragment:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-core-utils:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-media-compat:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-core-ui:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.0/AndroidManifest.xml:25:5-20
 MERGED from [com.android.support:support-compat:24.2.0] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.0/AndroidManifest.xml:25:5-20
-MERGED from [com.github.Raizlabs.DBFlow:dbflow:4.0.0-beta1] /Users/chmanish/Projects/CodePath/CPTweetsM/app/build/intermediates/exploded-aar/com.github.Raizlabs.DBFlow/dbflow/4.0.0-beta1/AndroidManifest.xml:11:5-20
 	android:label
 		ADDED from /Users/chmanish/Projects/CodePath/CPTweetsM/app/src/main/AndroidManifest.xml:21:9-41
 	android:allowBackup

@@ -2,8 +2,10 @@ package com.codepath.apps.CPTweetsM;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ListView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
+import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -18,18 +20,36 @@ public class TimelineActivity extends AppCompatActivity {
 
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
-    private TweetsArrayAdapter aTweets;
-    private ListView lvTweets;
+    private TweetsAdapter adapter;
+    public static int since_id=1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        lvTweets = (ListView)findViewById(R.id.lvTweets);
-        tweets = new ArrayList<>();
-        aTweets = new TweetsArrayAdapter(this, tweets);
-        lvTweets.setAdapter(aTweets);
         client = TwitterApplication.getRestClient(); //singleton client
+        setupViews();
         populateTimeline();
+    }
+
+    public void setupViews(){
+        RecyclerView rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
+        tweets = new ArrayList<>();
+        adapter = new TweetsAdapter(this, tweets);
+        rvTweets.setAdapter(adapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvTweets.setLayoutManager(linearLayoutManager);
+
+        // Add on click listener later
+
+        rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                //populateTimeline();
+
+            }
+        });
+
     }
 
     // Send an api request to get the timeline json
@@ -40,14 +60,17 @@ public class TimelineActivity extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    aTweets.addAll(Tweet.fromJSONArray(response));
-
+                    JSONArray tweetJsonResults = null;
+                    //since_id+= 25;
+                    int curSize = adapter.getItemCount();
+                    tweets.addAll(Tweet.fromJSONArray(response));
+                    adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
                 }
-            });
+            }, since_id);
     }
 }
