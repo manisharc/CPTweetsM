@@ -2,6 +2,13 @@ package com.codepath.apps.CPTweetsM.models;
 
 import android.text.format.DateUtils;
 
+import com.codepath.apps.CPTweetsM.TweetDatabase;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,17 +18,38 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 // Parse the JSON + Store the data, encapsulate state logic or display logic
-public class Tweet {
+@Table(database = TweetDatabase.class)
+public class Tweet extends BaseModel {
+    @Column
     private String body;
+    @PrimaryKey
+    @Column
     private long uid; // unique id for the tweet
+    @Column
+    @ForeignKey(saveForeignKeyModel = true)
     private User user;
+    @Column
     private String createdAt;
 
-    public User getUser() {
-        return user;
+    public void setBody(String body) {
+        this.body = body;
     }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public String getBody() {
         return body;
+
     }
 
     public long getUid() {
@@ -32,7 +60,9 @@ public class Tweet {
         return createdAt;
     }
 
-
+    public User getUser() {
+        return user;
+    }
     // Deserialize the JSON
     public static Tweet fromJSON(JSONObject jsonObject){
         Tweet tweet = new Tweet();
@@ -58,6 +88,7 @@ public class Tweet {
                 Tweet tweet = Tweet.fromJSON(tweetJson);
                 if (tweet != null){
                     tweets.add(tweet);
+                    tweet.save();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -85,4 +116,14 @@ public class Tweet {
 
         return relativeDate;
     }
+
+    /*
+    // Record Finders
+    public static SampleModel byId(long id) {
+        return new Select().from(SampleModel.class).where(SampleModel_Table.id.eq(id)).querySingle();
+    }
+
+    public static List<SampleModel> recentItems() {
+        return new Select().from(SampleModel.class).orderBy(SampleModel_Table.id, false).limit(300).queryList();
+    }*/
 }

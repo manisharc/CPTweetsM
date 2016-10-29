@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
-import com.codepath.apps.CPTweetsM.TwitterClient;
+import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 

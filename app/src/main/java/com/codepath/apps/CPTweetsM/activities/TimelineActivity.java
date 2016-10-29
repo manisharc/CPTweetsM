@@ -1,4 +1,4 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,10 +8,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
+import com.codepath.apps.CPTweetsM.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
+import com.codepath.apps.CPTweetsM.network.NetworkStatus;
+import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -29,20 +35,34 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     public static long max_id = 0;
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvTweets;
+    private boolean isOnline = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         client = TwitterApplication.getRestClient(); //singleton client
+        NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
+        isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
         setupViews();
-        populateTimeline(false);
+        if (isOnline)
+            // Retrieve from the network
+            populateTimeline(false, true);
+        else {
+            /*
+            //Retrieve from the database
+            int curSize = adapter.getItemCount();
+            //get from database
+            List<Tweet> tweetsFromDb = getAllTweetsFromDatabase();
+            tweets.addAll(tweetsFromDb);
+            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);*/
+        }
     }
 
     public void setupViews(){
         rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        tweets = new LinkedList<>();
+        tweets = new LinkedList<Tweet>();
         adapter = new TweetsAdapter(this, tweets);
         rvTweets.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -53,7 +73,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                populateTimeline(false);
+                if (isOnline)
+                    populateTimeline(false, false);
 
             }
         });
@@ -62,9 +83,14 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentManager fm = getSupportFragmentManager();
-                ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance();
-                editNameDialogFragment.show(fm, "fragment_compose_tweet");
+                if (isOnline) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance();
+                    editNameDialogFragment.show(fm, "fragment_compose_tweet");
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "You are offline. Can't update tweet", Toast.LENGTH_LONG).show();
+
             }
         });
 
@@ -73,11 +99,16 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             @Override
             public void onRefresh() {
                 // Refresh list of tweets
-                int size = tweets.size();
-                tweets.clear();
-                adapter.notifyItemRangeRemoved(0, size);
-                max_id = 0;
-                populateTimeline(true);
+                if (isOnline) {
+                    int size = tweets.size();
+                    tweets.clear();
+
+                    adapter.notifyItemRangeRemoved(0, size);
+                    //Clear database
+
+                    max_id = 0;
+                    populateTimeline(true, false);
+                }
             }
         });
         // Configure the refreshing colors
@@ -91,14 +122,48 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
 
     @Override
     public void onFinishComposeDialog(Tweet newTweet) {
-        //Toast.makeText(this, newTweet, Toast.LENGTH_LONG).show();
         tweets.addFirst(newTweet);
+
+        /*//Update database here
+        newTweet.save();*/
         adapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);   // index 0 position
     }
+    /*
+    private void addToDataBase(){
+        FlowManager.getDatabase(TweetDatabase.class)
+                .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
+                        new ProcessModelTransaction.ProcessModel<Tweet>() {
+                            @Override
+                            public void processModel(Tweet tweet) {
+                                User user = tweet.getUser();
+                                user.save();
+                                tweet.save();
+                            }
+                        }).addAll(tweets).build())  // add elements (can also handle multiple)
+                .error(new Transaction.Error() {
+                    @Override
+                    public void onError(Transaction transaction, Throwable error) {
+
+                    }
+                })
+                .success(new Transaction.Success() {
+                    @Override
+                    public void onSuccess(Transaction transaction) {
+
+                    }
+                }).build().execute();
+
+    }
+
+    private List<Tweet> getAllTweetsFromDatabase(){
+        List<Tweet> tweetList = SQLite.select().
+                from(Tweet.class).queryList();
+        return tweetList;
+    }*/
     // Send an api request to get the timeline json
     // Fill the view by creating the tweet objects from the json
-    private void populateTimeline(final boolean isRefresh) {
+    private void populateTimeline(final boolean isRefresh, final boolean isFirstCall) {
             client.getHomeTimeline(new JsonHttpResponseHandler(){
                 // Success
 
@@ -108,6 +173,13 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                     int curSize = adapter.getItemCount();
                     tweets.addAll(Tweet.fromJSONArray(response));
                     max_id = tweets.get(tweets.size()-1).getUid();
+                    /*
+                    //Update database here
+                    if (isFirstCall){
+                        SQLite.delete(User.class);
+                        SQLite.delete(Tweet.class);
+                    }
+                    addToDataBase();*/
                     adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
                     if (isRefresh)
                         swipeContainer.setRefreshing(false);
@@ -119,4 +191,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                 }
             }, max_id);
     }
+
+
 }

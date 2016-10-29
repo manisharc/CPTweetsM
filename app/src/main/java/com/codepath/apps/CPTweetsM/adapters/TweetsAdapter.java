@@ -106,6 +106,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         // Get the data model based on position
         Tweet tweet = mTweets.get(position);
 
+
         // Set item views based on your views and data model
         TextView tvUserName = viewHolder.tvUserName;
         TextView tvBody = viewHolder.tvBody;
@@ -113,33 +114,22 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvCreatedTime = viewHolder.tvCreatedTime;
         ImageView ivProfileImage = viewHolder.ivProfileImage;
 
-        tvName.setText(tweet.getUser().getName());
-        tvUserName.setText(tweet.getUser().getScreenName());
-        tvBody.setText(tweet.getBody());
-        tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
+        if (tweet != null) {
+            tvName.setText(tweet.getUser().getName());
+            tvUserName.setText(tweet.getUser().getScreenName());
+            tvBody.setText(tweet.getBody());
+            tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
 
-        ivProfileImage.setImageResource(android.R.color.transparent);
+            ivProfileImage.setImageResource(android.R.color.transparent);
 
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
-
+            Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
+        }
 
     }
     // Returns the total count of items in the list
     @Override
     public int getItemCount() {
         return mTweets.size();
-    }
-
-    // Clean all elements of the recycler
-    public void clear() {
-        mTweets.clear();
-        notifyDataSetChanged();
-    }
-
-    // Add a list of items
-    public void addAll(List<Tweet> list) {
-        mTweets.addAll(list);
-        notifyDataSetChanged();
     }
 
 }

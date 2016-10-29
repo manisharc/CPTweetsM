@@ -1,4 +1,4 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.network;
 
 import android.content.Context;
 
