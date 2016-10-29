@@ -28,6 +28,7 @@ public class TwitterClient extends OAuthBaseClient {
 	public static final String REST_CONSUMER_SECRET = "sLJAGyiwGLHfyqtrJdUC5pN7MaRs4BWyBhXIhxMHq86Z69vgU3";
 	public static final String REST_CALLBACK_URL = "oauth://cpsimpletweets";
 
+
 	public TwitterClient(Context context) {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
@@ -40,12 +41,23 @@ public class TwitterClient extends OAuthBaseClient {
 	 *    i.e client.post(apiUrl, params, handler);
 	 */
 
-	public void getHomeTimeline(AsyncHttpResponseHandler handler, int since_id){
+	public void getHomeTimeline(AsyncHttpResponseHandler handler, long max_id){
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("count", 25);
-		params.put("since_id", since_id);
+		if (max_id != 0) {
+			params.put("max_id", max_id - 1);
+		}
 		getClient().get(apiUrl, params, handler);
+	}
+
+	public void postTweet(AsyncHttpResponseHandler handler, String tweetString){
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("status", tweetString);
+		//in_reply_to_status_id
+		getClient().post(apiUrl, params, handler);
+
 	}
 
 	// Compose tweets

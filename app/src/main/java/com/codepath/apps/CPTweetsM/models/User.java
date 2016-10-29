@@ -31,7 +31,7 @@ public class User {
 
         try {
             u.name = jsonObject.getString("name");
-            u.screenName = jsonObject.getString("screen_name");
+            u.screenName = "@" + (jsonObject.getString("screen_name"));
             u.profileImageUrl = jsonObject.getString("profile_image_url");
             u.uid = jsonObject.getLong("id");
             u.profileImageUrl = jsonObject.getString("profile_image_url_https");
