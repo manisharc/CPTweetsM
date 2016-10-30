@@ -11,19 +11,32 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.CPTweetsM.ItemClickSupport;
 import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.TweetDatabase;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
+import com.codepath.apps.CPTweetsM.models.Tweet_Table;
+import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.raizlabs.android.dbflow.config.DatabaseDefinition;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
+import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -49,13 +62,12 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             // Retrieve from the network
             populateTimeline(false, true);
         else {
-            /*
             //Retrieve from the database
             int curSize = adapter.getItemCount();
             //get from database
             List<Tweet> tweetsFromDb = getAllTweetsFromDatabase();
             tweets.addAll(tweetsFromDb);
-            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);*/
+            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);
         }
     }
 
@@ -109,6 +121,11 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                     max_id = 0;
                     populateTimeline(true, false);
                 }
+                else {
+                    Toast.makeText(getApplicationContext(), "You are offline. Can't refresh tweets", Toast.LENGTH_LONG).show();
+
+
+                }
             }
         });
         // Configure the refreshing colors
@@ -117,19 +134,34 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        /* Approach 1 - new activity which shows webview
+                        Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
+                        Article article = articles.get(position);
+                        i.putExtra("article", article);
+                        startActivity(i);*/
+                    }
+                }
+        );
+
+
 
     }
 
     @Override
     public void onFinishComposeDialog(Tweet newTweet) {
         tweets.addFirst(newTweet);
-
-        /*//Update database here
-        newTweet.save();*/
+        //Update database here
+        newTweet.save();
         adapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);   // index 0 position
     }
-    /*
+
+
     private void addToDataBase(){
         FlowManager.getDatabase(TweetDatabase.class)
                 .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
@@ -156,11 +188,31 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
 
     }
 
+    private void deleteTables(){
+        DatabaseDefinition database = FlowManager.getDatabase(TweetDatabase.class);
+        Transaction transaction = database.beginTransactionAsync(new ITransaction() {
+            @Override
+            public void execute(DatabaseWrapper databaseWrapper) {
+                Delete.table(User.class);
+                Delete.table(Tweet.class);
+            }
+
+
+        }).build();
+        transaction.execute(); // execute
+
+        transaction.cancel();
+        // attempt to cancel before its run. If it's already ran, this call has no effect.
+
+
+    }
+
     private List<Tweet> getAllTweetsFromDatabase(){
+        // Order the return based on createdDate
         List<Tweet> tweetList = SQLite.select().
-                from(Tweet.class).queryList();
+                from(Tweet.class).orderBy(Tweet_Table.uid, false).queryList();
         return tweetList;
-    }*/
+    }
     // Send an api request to get the timeline json
     // Fill the view by creating the tweet objects from the json
     private void populateTimeline(final boolean isRefresh, final boolean isFirstCall) {
@@ -173,13 +225,13 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                     int curSize = adapter.getItemCount();
                     tweets.addAll(Tweet.fromJSONArray(response));
                     max_id = tweets.get(tweets.size()-1).getUid();
-                    /*
+
                     //Update database here
-                    if (isFirstCall){
-                        SQLite.delete(User.class);
-                        SQLite.delete(Tweet.class);
+                    if (isFirstCall | isRefresh){
+                        deleteTables();
+
                     }
-                    addToDataBase();*/
+                    addToDataBase();
                     adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
                     if (isRefresh)
                         swipeContainer.setRefreshing(false);

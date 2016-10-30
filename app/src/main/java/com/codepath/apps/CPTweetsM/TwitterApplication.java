@@ -26,7 +26,6 @@ public class TwitterApplication extends Application {
 
 		FlowManager.init(new FlowConfig.Builder(this).build());
 		FlowLog.setMinimumLoggingLevel(FlowLog.Level.V);
-
 		TwitterApplication.context = this;
 	}
 

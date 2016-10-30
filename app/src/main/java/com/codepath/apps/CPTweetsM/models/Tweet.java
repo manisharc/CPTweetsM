@@ -31,6 +31,8 @@ public class Tweet extends BaseModel {
     @Column
     private String createdAt;
 
+    private String imageUrl;
+
     public void setBody(String body) {
         this.body = body;
     }
@@ -72,6 +74,8 @@ public class Tweet extends BaseModel {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user= User.fromJSON(jsonObject.getJSONObject("user"));
+            //if (jsonObject.getJSONObject("media") != null)
+            //    tweet.imageUrl = (jsonObject.getJSONObject("media")).getString("media_url");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -88,7 +92,6 @@ public class Tweet extends BaseModel {
                 Tweet tweet = Tweet.fromJSON(tweetJson);
                 if (tweet != null){
                     tweets.add(tweet);
-                    tweet.save();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
