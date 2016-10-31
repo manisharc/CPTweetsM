@@ -1,5 +1,6 @@
 package com.codepath.apps.CPTweetsM.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -146,12 +147,10 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                 new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
-                        /* Approach 1 - new activity which shows webview
-                        Intent i = new Intent(getApplicationContext(), ArticleActivity.class);
-                        Article article = articles.get(position);
-                        i.putExtra("article", article);
-                        startActivity(i);*/
+                        Intent i = new Intent(getApplicationContext(), TweetDetailActivity.class);
+                        Tweet tweet = tweets.get(position);
+                        i.putExtra("tweet", tweet);
+                        startActivity(i);
                     }
                 }
         );

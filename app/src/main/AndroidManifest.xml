@@ -43,6 +43,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.TimelineActivity" />
+        <activity android:name=".activities.TweetDetailActivity" />
     </application>
 
 </manifest>

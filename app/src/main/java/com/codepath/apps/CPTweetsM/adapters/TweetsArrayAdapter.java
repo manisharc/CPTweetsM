@@ -8,9 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.models.Tweet;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet>{
 
         ivProfileImage.setImageResource(android.R.color.transparent);
 
-        Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
+        Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
         return convertView;
     }
 }

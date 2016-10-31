@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.models.Tweet;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -156,7 +157,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.getBody());
             tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
             ivProfileImage.setImageResource(android.R.color.transparent);
-            Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
+            Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
             if (tweet.isFavorited()){
                 ivFavorite.setImageResource(R.drawable.ic_favorite_red_900_18dp);
             }
@@ -168,9 +169,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivImage.setVisibility(View.VISIBLE);
                 vvVideo.setVisibility(View.GONE);
                 ivImage.setImageResource(android.R.color.transparent);
-                Picasso.with(getContext()).load(tweet.getImageUrl()).into(ivImage);
+                Glide.with(getContext()).load(tweet.getImageUrl()).into(ivImage);
             } //video media
-            /*else if(tweet.getMediaType() == 1){
+            else if(tweet.getMediaType() == 1){
                 vvVideo.setVideoPath(tweet.getVideoUrl());
                 MediaController mediaController = new MediaController(getContext());
                 mediaController.setAnchorView(vvVideo);
@@ -180,7 +181,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 vvVideo.requestFocus();
                 vvVideo.start();
 
-            }*/
+            }
             else{
                 ivImage.setVisibility(View.GONE);
                 vvVideo.setVisibility(View.GONE);

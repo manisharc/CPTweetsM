@@ -1,5 +1,8 @@
 package com.codepath.apps.CPTweetsM.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.codepath.apps.CPTweetsM.TweetDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
@@ -9,7 +12,7 @@ import com.raizlabs.android.dbflow.structure.BaseModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 @Table(database = TweetDatabase.class)
-public class User extends BaseModel{
+public class User extends BaseModel implements Parcelable {
     @Column
     private String name;
 
@@ -71,4 +74,39 @@ public class User extends BaseModel{
 
         return u;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeLong(this.uid);
+        dest.writeString(this.screenName);
+        dest.writeString(this.profileImageUrl);
+    }
+
+    public User() {
+    }
+
+    protected User(Parcel in) {
+        this.name = in.readString();
+        this.uid = in.readLong();
+        this.screenName = in.readString();
+        this.profileImageUrl = in.readString();
+    }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

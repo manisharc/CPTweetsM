@@ -1,5 +1,7 @@
 package com.codepath.apps.CPTweetsM.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.DateUtils;
 
 import com.codepath.apps.CPTweetsM.TweetDatabase;
@@ -19,7 +21,7 @@ import java.util.Locale;
 
 // Parse the JSON + Store the data, encapsulate state logic or display logic
 @Table(database = TweetDatabase.class)
-public class Tweet extends BaseModel {
+public class Tweet extends BaseModel implements Parcelable {
     @Column
     private String body;
     @PrimaryKey
@@ -240,4 +242,48 @@ public class Tweet extends BaseModel {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.body);
+        dest.writeLong(this.uid);
+        dest.writeParcelable(this.user, flags);
+        dest.writeString(this.createdAt);
+        dest.writeByte(this.favorited ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.favoriteCount);
+        dest.writeInt(this.mediaType);
+        dest.writeString(this.imageUrl);
+        dest.writeString(this.videoUrl);
+    }
+
+    public Tweet() {
+    }
+
+    protected Tweet(Parcel in) {
+        this.body = in.readString();
+        this.uid = in.readLong();
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.createdAt = in.readString();
+        this.favorited = in.readByte() != 0;
+        this.favoriteCount = in.readInt();
+        this.mediaType = in.readInt();
+        this.imageUrl = in.readString();
+        this.videoUrl = in.readString();
+    }
+
+    public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
+        @Override
+        public Tweet createFromParcel(Parcel source) {
+            return new Tweet(source);
+        }
+
+        @Override
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
 }

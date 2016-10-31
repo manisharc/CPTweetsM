@@ -82,7 +82,8 @@ public class ComposeTweetFragment extends DialogFragment {
 
         if(replyTweet != null){
             btnTweet.setText("Reply");
-            etTweet.setText(replyTweet.getUser().getScreenName());
+            String reply = replyTweet.getUser().getScreenName() + " ";
+            etTweet.setText(reply);
             etTweet.setSelection((etTweet.getText().length()));
             etTweet.setCursorVisible(true);
             in_reply_to_status_id = Long.toString(replyTweet.getUid());
