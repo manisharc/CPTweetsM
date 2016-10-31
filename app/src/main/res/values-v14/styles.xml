@@ -8,6 +8,7 @@
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
         <item name="colorAccent">@android:color/holo_blue_light</item>
+        <item name="colorPrimary">#1DA1F3</item>
     </style>
 
 </resources>

@@ -31,7 +31,37 @@ public class Tweet extends BaseModel {
     @Column
     private String createdAt;
 
+    private int mediaType;
+    private static int MEDIA_TYPE_PHOTO = 0;
+    private static int MEDIA_TYPE_VIDEO = 1;
+
     private String imageUrl;
+    private String videoUrl;
+
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public int getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(int mediaType) {
+        this.mediaType = mediaType;
+    }
 
     public void setBody(String body) {
         this.body = body;
@@ -74,8 +104,48 @@ public class Tweet extends BaseModel {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user= User.fromJSON(jsonObject.getJSONObject("user"));
-            //if (jsonObject.getJSONObject("media") != null)
-            //    tweet.imageUrl = (jsonObject.getJSONObject("media")).getString("media_url");
+
+            if (jsonObject.has("extended_entities")) {
+                JSONObject jsonExtendedEntitiesObject = jsonObject.getJSONObject("extended_entities");
+
+                if (jsonExtendedEntitiesObject.has("media")) {
+                    JSONArray jsonMediaArray = jsonExtendedEntitiesObject.getJSONArray("media");
+
+                    if (jsonMediaArray.length() > 0) {
+                        JSONObject jsonMediaObject = jsonMediaArray.getJSONObject(0);
+
+                        if (jsonMediaObject.has("type") && jsonMediaObject.has("media_url")) {
+                            String type = jsonMediaObject.getString("type");
+                            if (type.equals("photo")) {
+                                tweet.mediaType = MEDIA_TYPE_PHOTO;
+
+                            }
+                            else if (type.equals("video")) {
+                                tweet.mediaType = MEDIA_TYPE_VIDEO;
+                                if (jsonMediaObject.has("video_info")) {
+                                    JSONObject jsonVideoInfoObject = jsonMediaObject.getJSONObject("video_info");
+                                    if (jsonVideoInfoObject.has("variants")) {
+                                        JSONArray jsonVariantsArray = jsonVideoInfoObject.getJSONArray("variants");
+                                        if (jsonVariantsArray.length() > 0) {
+                                            JSONObject jsonVariantObject = jsonVariantsArray.getJSONObject(0);
+                                            if (jsonVariantObject.has("url")) {
+                                                tweet.videoUrl = jsonVariantObject.getString("url");
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+                            tweet.imageUrl = jsonMediaObject.getString("media_url");
+                        }
+
+
+                    }
+                }
+            }
+
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -120,13 +190,5 @@ public class Tweet extends BaseModel {
         return relativeDate;
     }
 
-    /*
-    // Record Finders
-    public static SampleModel byId(long id) {
-        return new Select().from(SampleModel.class).where(SampleModel_Table.id.eq(id)).querySingle();
-    }
 
-    public static List<SampleModel> recentItems() {
-        return new Select().from(SampleModel.class).orderBy(SampleModel_Table.id, false).limit(300).queryList();
-    }*/
 }

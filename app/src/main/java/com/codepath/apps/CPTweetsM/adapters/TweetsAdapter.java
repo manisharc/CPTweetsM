@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.models.Tweet;
@@ -44,7 +45,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         private TextView tvName;
         private TextView tvCreatedTime;
         private ImageView ivProfileImage;
-
+        private ImageView ivImage;
+        private VideoView vvVideo;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -57,6 +59,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
             tvBody = (TextView) itemView.findViewById(R.id.tvBody);
             tvCreatedTime = (TextView) itemView.findViewById(R.id.tvCreatedTime);
+            ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
+            vvVideo = (VideoView) itemView.findViewById(R.id.vvVideo);
 
             // Setup the click listener
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -105,24 +109,46 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void onBindViewHolder(TweetsAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
         Tweet tweet = mTweets.get(position);
-
-
         // Set item views based on your views and data model
         TextView tvUserName = viewHolder.tvUserName;
         TextView tvBody = viewHolder.tvBody;
         TextView tvName = viewHolder.tvName;
         TextView tvCreatedTime = viewHolder.tvCreatedTime;
         ImageView ivProfileImage = viewHolder.ivProfileImage;
+        ImageView ivImage = viewHolder.ivImage;
+        VideoView vvVideo = viewHolder.vvVideo;
 
         if (tweet != null) {
             tvName.setText(tweet.getUser().getName());
             tvUserName.setText(tweet.getUser().getScreenName());
             tvBody.setText(tweet.getBody());
             tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
-
             ivProfileImage.setImageResource(android.R.color.transparent);
-
             Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
+            //image media
+            if(tweet.getMediaType() == 0){
+                ivImage.setVisibility(View.VISIBLE);
+                vvVideo.setVisibility(View.GONE);
+                ivImage.setImageResource(android.R.color.transparent);
+                Picasso.with(getContext()).load(tweet.getImageUrl()).into(ivImage);
+            } //video media
+            /*else if(tweet.getMediaType() == 1){
+                vvVideo.setVideoPath(tweet.getVideoUrl());
+                MediaController mediaController = new MediaController(getContext());
+                mediaController.setAnchorView(vvVideo);
+                vvVideo.setMediaController(mediaController);
+                vvVideo.setVisibility(View.VISIBLE);
+                ivImage.setVisibility(View.GONE);
+                vvVideo.requestFocus();
+                vvVideo.start();
+
+            }*/
+            else{
+                ivImage.setVisibility(View.GONE);
+                vvVideo.setVisibility(View.GONE);
+            }
+
+
         }
 
     }

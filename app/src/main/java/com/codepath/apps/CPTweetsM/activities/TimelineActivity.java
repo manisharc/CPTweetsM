@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.codepath.apps.CPTweetsM.DividerItemDecoration;
 import com.codepath.apps.CPTweetsM.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.CPTweetsM.ItemClickSupport;
 import com.codepath.apps.CPTweetsM.R;
@@ -54,6 +55,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setElevation(0);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        getSupportActionBar().setTitle("");
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+        //getSupportActionBar().setTitle("");
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setLogo(R.mipmap.twitter_logo);
+        //getSupportActionBar().setDisplayUseLogoEnabled(true);
         client = TwitterApplication.getRestClient(); //singleton client
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
@@ -79,6 +91,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         rvTweets.setAdapter(adapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvTweets.setLayoutManager(linearLayoutManager);
+        rvTweets.addItemDecoration(
+                new DividerItemDecoration(this, R.drawable.divider));
 
         // Add on click listener later
 
@@ -114,10 +128,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                 if (isOnline) {
                     int size = tweets.size();
                     tweets.clear();
-
                     adapter.notifyItemRangeRemoved(0, size);
                     //Clear database
-
                     max_id = 0;
                     populateTimeline(true, false);
                 }
@@ -200,7 +212,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
 
         }).build();
         transaction.execute(); // execute
-
         transaction.cancel();
         // attempt to cancel before its run. If it's already ran, this call has no effect.
 
@@ -221,7 +232,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    JSONArray tweetJsonResults = null;
                     int curSize = adapter.getItemCount();
                     tweets.addAll(Tweet.fromJSONArray(response));
                     max_id = tweets.get(tweets.size()-1).getUid();
