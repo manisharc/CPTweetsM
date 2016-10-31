@@ -29,6 +29,9 @@ public class TweetDetailActivity extends AppCompatActivity {
             TextView tvCreatedTime = (TextView) findViewById(R.id.tvCreatedTime);
             ImageView ivImage = (ImageView) findViewById(R.id.ivImage);
             TextView tvFavoriteCount = (TextView) findViewById(R.id.tvFavoriteCount);
+            TextView tvLikes = (TextView) findViewById(R.id.tvLikes);
+            TextView tvRetweetCount = (TextView) findViewById(R.id.tvRetweetCount);
+            TextView tvRetweet = (TextView) findViewById(R.id.tvRetweet);
 
             tvName.setText(tweet.getUser().getName());
             tvUserName.setText(tweet.getUser().getScreenName());
@@ -37,10 +40,25 @@ public class TweetDetailActivity extends AppCompatActivity {
             ivProfileImage.setImageResource(android.R.color.transparent);
             Glide.with(this).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
             //Set ivProfileImage
-            if(tweet.getMediaType() == 0){
+            if (tweet.getMediaType() == 0){
                 ivImage.setVisibility(View.VISIBLE);
                 ivImage.setImageResource(android.R.color.transparent);
                 Glide.with(this).load(tweet.getImageUrl()).into(ivImage);
+            }
+            if (tweet.getFavoriteCount() > 0){
+                tvFavoriteCount.setText(Integer.toString(tweet.getFavoriteCount()));
+            }
+            else {
+                tvFavoriteCount.setVisibility(View.GONE);
+                tvLikes.setVisibility(View.GONE);
+            }
+
+            if (tweet.getRetweetCount() > 0){
+                tvRetweetCount.setText(Integer.toString(tweet.getRetweetCount()));
+            }
+            else {
+                tvRetweetCount.setVisibility(View.GONE);
+                tvRetweet.setVisibility(View.GONE);
             }
         }
 
