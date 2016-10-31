@@ -4,15 +4,27 @@
     android:layout_width="wrap_content" android:layout_height="wrap_content"
     android:layout_gravity="center" android:orientation="vertical"  >
 
+    <ImageButton
+        android:id="@+id/btnClose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_close_black_24dp" />
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:id="@+id/etTweet"
         android:background="@android:color/transparent"
         android:maxLength="280"
+        android:layout_marginLeft="10dp"
         android:hint="@string/compose_hint"
         android:cursorVisible="false"
         android:inputType="textNoSuggestions"
+        android:layout_below="@+id/btnClose"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
@@ -26,11 +38,10 @@
         android:textColor="#FFFFFF"
         android:id="@+id/btnTweet"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/etTweet"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:onClick="onSave"/>
-
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,7 +54,5 @@
         android:layout_toLeftOf="@+id/btnTweet"
         android:layout_marginRight="5dp"
         android:layout_toStartOf="@+id/btnTweet" />
-
-
 
 </RelativeLayout>

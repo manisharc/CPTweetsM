@@ -16,13 +16,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
-import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.codepath.apps.CPTweetsM.models.Tweet;
+import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -37,6 +38,7 @@ public class ComposeTweetFragment extends DialogFragment {
     private TwitterClient client;
     private EditText etTweet;
     private Button btnTweet;
+    private ImageButton btnClose;
     private TextView tvChar;
     private Button btnDismiss;
     private Tweet newTweet;
@@ -73,6 +75,7 @@ public class ComposeTweetFragment extends DialogFragment {
         etTweet = (EditText) view.findViewById(R.id.etTweet);
         tvChar = (TextView) view.findViewById(R.id.tvChar);
         btnTweet = (Button) view.findViewById(R.id.btnTweet);
+        btnClose = (ImageButton) view.findViewById(R.id.btnClose);
 
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +101,14 @@ public class ComposeTweetFragment extends DialogFragment {
                     }
                 }, etTweet.getText().toString());
 
+
+            }
+        });
+
+        btnClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
 
             }
         });
@@ -142,7 +153,7 @@ public class ComposeTweetFragment extends DialogFragment {
         Display display = window.getWindowManager().getDefaultDisplay();
         display.getSize(size);
         // Set the width of the dialog proportional to 75% of the screen width
-        window.setLayout((int) (size.x * 1), (int) (size.y * 1));
+        window.setLayout((int) (size.x * 0.75), (int) (size.y * 0.5));
         window.setGravity(Gravity.CENTER);
         // Call super onResume after sizing
         super.onResume();

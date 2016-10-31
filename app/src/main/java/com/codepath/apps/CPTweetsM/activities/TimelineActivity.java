@@ -57,8 +57,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         setContentView(R.layout.activity_timeline);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setElevation(0);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
+
         getSupportActionBar().setTitle("");
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);

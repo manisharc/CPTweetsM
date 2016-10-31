@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">SimpleTweets</string>
+    <string name="app_name">Tweets</string>
     <string name="login_label">Connect to Twitter</string>
     <string name="btn_tweet">Tweet</string>
     <string name="compose_hint">What\'s happening?</string>
