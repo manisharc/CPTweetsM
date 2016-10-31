@@ -1,10 +1,13 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Display;
@@ -44,6 +47,7 @@ public class ComposeTweetFragment extends DialogFragment {
     private Tweet newTweet;
     private static Tweet replyTweet;
     private String in_reply_to_status_id;
+    private int mCharLeft = 140;
 
     public ComposeTweetFragment() {
         // Empty constructor is required for DialogFragment
@@ -72,6 +76,12 @@ public class ComposeTweetFragment extends DialogFragment {
         return inflater.inflate(R.layout.fragment_compose_tweet, container);
     }
 
+    private void showAlertDialog() {
+        FragmentManager fm = getFragmentManager();
+        SaveDraftFragment alertDialog = SaveDraftFragment.newInstance(etTweet.getText().toString());
+        alertDialog.show(fm, "fragment_alert");
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -89,6 +99,19 @@ public class ComposeTweetFragment extends DialogFragment {
             etTweet.setCursorVisible(true);
             in_reply_to_status_id = Long.toString(replyTweet.getUid());
 
+        }
+
+        SharedPreferences pref = PreferenceManager.
+                getDefaultSharedPreferences(getContext());
+        String draft = pref.getString("draft", "");
+
+        // Save draft only if its compose tweet
+        if (draft != "" && replyTweet == null){
+            etTweet.setText(draft + " ");
+            etTweet.setSelection((etTweet.getText().length()));
+            etTweet.setCursorVisible(true);
+            mCharLeft -= (etTweet.getText().length());
+            tvChar.setText(Integer.toString(mCharLeft));
         }
 
         btnTweet.setOnClickListener(new View.OnClickListener() {
@@ -119,13 +142,22 @@ public class ComposeTweetFragment extends DialogFragment {
             }
         });
 
+
+
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Alert to save draft
+                String draft = etTweet.getText().toString();
+                if (replyTweet == null && !draft.equals(""))
+                    showAlertDialog();
                 dismiss();
 
             }
         });
+
+
+
 
         etTweet.addTextChangedListener(new TextWatcher()
         {
@@ -133,7 +165,7 @@ public class ComposeTweetFragment extends DialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
                 // this will show characters remaining
-                int charLeft = 140 - s.toString().length();
+                int charLeft = mCharLeft - s.toString().length();
                 tvChar.setText(Integer.toString(charLeft));
                 if (charLeft < 0) {
                     tvChar.setTextColor(Color.RED);
