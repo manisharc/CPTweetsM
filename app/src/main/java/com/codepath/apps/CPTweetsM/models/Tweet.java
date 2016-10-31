@@ -37,7 +37,7 @@ public class Tweet extends BaseModel implements Parcelable {
 
     private int favoriteCount;
     // Not storing to the database because when offline you cant access anyway
-    private int mediaType;
+    private int mediaType = -1;
     private static int MEDIA_TYPE_PHOTO = 0;
     private static int MEDIA_TYPE_VIDEO = 1;
 
