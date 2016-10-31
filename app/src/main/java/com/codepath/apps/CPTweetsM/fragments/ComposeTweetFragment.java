@@ -67,6 +67,7 @@ public class ComposeTweetFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         client = TwitterApplication.getRestClient(); //singleton client
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         return inflater.inflate(R.layout.fragment_compose_tweet, container);
     }
