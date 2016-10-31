@@ -42,6 +42,8 @@ public class ComposeTweetFragment extends DialogFragment {
     private TextView tvChar;
     private Button btnDismiss;
     private Tweet newTweet;
+    private static Tweet replyTweet;
+    private String in_reply_to_status_id;
 
     public ComposeTweetFragment() {
         // Empty constructor is required for DialogFragment
@@ -49,8 +51,9 @@ public class ComposeTweetFragment extends DialogFragment {
         // Use `newInstance` instead as shown below
     }
 
-    public static ComposeTweetFragment newInstance() {
+    public static ComposeTweetFragment newInstance(Tweet reply) {
         ComposeTweetFragment frag = new ComposeTweetFragment();
+        replyTweet = reply;
         return frag;
     }
 
@@ -77,6 +80,15 @@ public class ComposeTweetFragment extends DialogFragment {
         btnTweet = (Button) view.findViewById(R.id.btnTweet);
         btnClose = (ImageButton) view.findViewById(R.id.btnClose);
 
+        if(replyTweet != null){
+            btnTweet.setText("Reply");
+            etTweet.setText(replyTweet.getUser().getScreenName());
+            etTweet.setSelection((etTweet.getText().length()));
+            etTweet.setCursorVisible(true);
+            in_reply_to_status_id = Long.toString(replyTweet.getUid());
+
+        }
+
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +111,7 @@ public class ComposeTweetFragment extends DialogFragment {
                         // What should happen on failure
                         Toast.makeText(getContext(), "Tweet failed to upload. Try again?", Toast.LENGTH_SHORT).show();
                     }
-                }, etTweet.getText().toString());
+                }, etTweet.getText().toString(), in_reply_to_status_id);
 
 
             }

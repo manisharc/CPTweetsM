@@ -69,7 +69,6 @@
         android:layout_toEndOf="@+id/ivProfileImage"
         android:visibility="gone"/>
 
-
     <VideoView
         android:id="@+id/vvVideo"
         android:layout_width="350dp"
@@ -80,6 +79,39 @@
         android:layout_toEndOf="@+id/ivProfileImage"
         android:visibility="gone"
         />
+
+    <ImageButton
+        android:id="@+id/btnReply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:layout_marginTop="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/ivImage"
+        android:src="@drawable/ic_reply_blue_grey_300_18dp" />
+
+    <ImageView
+        android:id="@+id/ivFavorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginRight="5dp"
+        android:background="@null"
+        android:layout_below="@+id/ivImage"
+        android:src="@drawable/ic_favorite_blue_grey_300_18dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:id="@+id/tvFavoriteCount"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:background="@android:color/transparent"
+        android:layout_toEndOf="@+id/ivFavorite"
+        android:layout_below="@+id/ivImage"
+        android:layout_toRightOf="@+id/ivFavorite" />
+
     <!--
     <com.yqritc.scalablevideoview.ScalableVideoView
         android:id="@+id/vvVideo"

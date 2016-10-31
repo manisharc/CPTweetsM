@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.DividerItemDecoration;
@@ -48,6 +49,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     private TweetsAdapter adapter;
     public static long max_id = 0;
     private SwipeRefreshLayout swipeContainer;
+    private ImageButton ibReplyToTweet;
     private RecyclerView rvTweets;
     private boolean isOnline = true;
 
@@ -59,14 +61,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
-
         getSupportActionBar().setTitle("");
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-        //getSupportActionBar().setTitle("");
-        //getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setLogo(R.mipmap.twitter_logo);
-        //getSupportActionBar().setDisplayUseLogoEnabled(true);
         client = TwitterApplication.getRestClient(); //singleton client
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
@@ -95,8 +92,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         rvTweets.addItemDecoration(
                 new DividerItemDecoration(this, R.drawable.divider));
 
-        // Add on click listener later
-
         rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -112,7 +107,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             public void onClick(View view) {
                 if (isOnline) {
                     FragmentManager fm = getSupportFragmentManager();
-                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance();
+                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(null);
                     editNameDialogFragment.show(fm, "fragment_compose_tweet");
                 }
                 else
@@ -160,6 +155,22 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
                     }
                 }
         );
+
+        adapter.setOnTweetClickListener(new TweetsAdapter.OnTweetClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if (isOnline) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(tweets.get(position));
+                    editNameDialogFragment.show(fm, "fragment_compose_tweet");
+                }
+                else
+                    Toast.makeText(getApplicationContext(), "You are offline. Can't reply to tweets", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
 
 
 

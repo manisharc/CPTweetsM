@@ -31,6 +31,10 @@ public class Tweet extends BaseModel {
     @Column
     private String createdAt;
 
+    private boolean favorited;
+
+    private int favoriteCount;
+    // Not storing to the database because when offline you cant access anyway
     private int mediaType;
     private static int MEDIA_TYPE_PHOTO = 0;
     private static int MEDIA_TYPE_VIDEO = 1;
@@ -39,6 +43,21 @@ public class Tweet extends BaseModel {
     private String videoUrl;
 
 
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    public int getFavoriteCount() {
+        return favoriteCount;
+    }
+
+    public void setFavoriteCount(int favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
     public String getImageUrl() {
         return imageUrl;
     }
@@ -104,6 +123,9 @@ public class Tweet extends BaseModel {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user= User.fromJSON(jsonObject.getJSONObject("user"));
+            tweet.favoriteCount = jsonObject.getInt("favorite_count");
+            tweet.favorited = Boolean.parseBoolean(jsonObject.getString("favorited"));
+
 
             if (jsonObject.has("extended_entities")) {
                 JSONObject jsonExtendedEntitiesObject = jsonObject.getJSONObject("extended_entities");
@@ -178,15 +200,42 @@ public class Tweet extends BaseModel {
         SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
         sf.setLenient(true);
 
-        String relativeDate = "";
+        String relative = "";
+        String relativeDate;
         try {
             long dateMillis = sf.parse(rawJsonDate).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+            relative = DateUtils.getRelativeTimeSpanString(dateMillis,
                     System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
         } catch (java.text.ParseException e) {
             e.printStackTrace();
         }
 
+        if(relative.contains("hour ago")){
+            relativeDate = relative.replace(" hour ago", "h");
+        }
+        else if (relative.contains("hours ago")){
+            relativeDate = relative.replace(" hours ago", "h");
+        }
+        else if (relative.contains("minute ago")){
+            relativeDate = relative.replace(" minute ago", "m");
+        }
+        else if (relative.contains("minutes ago")){
+            relativeDate = relative.replace(" minutes ago", "m");
+        }
+        else if (relative.contains("second ago")){
+            relativeDate = relative.replace(" second ago", "s");
+        }
+        else if (relative.contains("seconds ago")){
+            relativeDate = relative.replace(" seconds ago", "s");
+        }
+        else if (relative.contains("Yesterday")){
+            relativeDate = relative.replace("Yesterday", "1d");
+        }
+        else if (relative.contains("days ago")){
+            relativeDate = relative.replace(" days ago", "d");
+        }
+        else
+            relativeDate = relative;
         return relativeDate;
     }
 

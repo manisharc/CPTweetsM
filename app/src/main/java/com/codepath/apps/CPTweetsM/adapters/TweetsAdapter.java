@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -36,7 +37,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         this.listener = listener;
     }
 
-
+    // Define listener member variable
+    private static OnTweetClickListener tweetListener;
+    // Define the listener interface
+    public interface OnTweetClickListener {
+        void onItemClick(View itemView, int position);
+    }
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnTweetClickListener(OnTweetClickListener listener) {
+        this.tweetListener = listener;
+    }
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -47,6 +57,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         private ImageView ivProfileImage;
         private ImageView ivImage;
         private VideoView vvVideo;
+        private ImageButton ibReplyToTweet;
+        private TextView tvFavoriteCount;
+        private ImageView ivFavorite;
 
         // We also create a constructor that accepts the entire item row
         // and does the view lookups to find each subview
@@ -61,8 +74,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvCreatedTime = (TextView) itemView.findViewById(R.id.tvCreatedTime);
             ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
             vvVideo = (VideoView) itemView.findViewById(R.id.vvVideo);
+            tvFavoriteCount = (TextView) itemView.findViewById(R.id.tvFavoriteCount);
+            ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
 
-            // Setup the click listener
+            ibReplyToTweet = (ImageButton) itemView.findViewById(R.id.btnReply);
+            // Setup the click listener for the item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -75,6 +91,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     }
                 }
             });
+
+            ibReplyToTweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (tweetListener != null) {
+                        int position = getAdapterPosition();
+                        if (tweetListener != null && position != RecyclerView.NO_POSITION) {
+                            tweetListener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
         }
     }
 
@@ -117,6 +147,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivProfileImage = viewHolder.ivProfileImage;
         ImageView ivImage = viewHolder.ivImage;
         VideoView vvVideo = viewHolder.vvVideo;
+        ImageView ivFavorite = viewHolder.ivFavorite;
+        TextView tvFavoriteCount = viewHolder.tvFavoriteCount;
 
         if (tweet != null) {
             tvName.setText(tweet.getUser().getName());
@@ -125,6 +157,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
             ivProfileImage.setImageResource(android.R.color.transparent);
             Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
+            if (tweet.isFavorited()){
+                ivFavorite.setImageResource(R.drawable.ic_favorite_red_900_18dp);
+            }
+            if (tweet.getFavoriteCount() > 0){
+                tvFavoriteCount.setText(Integer.toString(tweet.getFavoriteCount()));
+            }
             //image media
             if(tweet.getMediaType() == 0){
                 ivImage.setVisibility(View.VISIBLE);
