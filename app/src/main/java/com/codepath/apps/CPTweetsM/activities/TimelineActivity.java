@@ -1,9 +1,7 @@
 package com.codepath.apps.CPTweetsM.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -82,21 +80,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             tweets.addAll(tweetsFromDb);
             adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);
         }
-        SharedPreferences pref = PreferenceManager.
-                getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.remove("draft");//clean this key.
-        edit.commit();
-    }
-
-    @Override
-    protected void onStop(){
-        //clear the shared instance
-        SharedPreferences pref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.clear();
-        super.onStop();
 
     }
 
