@@ -34,9 +34,8 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:id="@+id/fabCompose"
-        android:src="@drawable/ic_add_circle_black_48dp"
+        android:src="@drawable/ic_add_white_36dp"
         app:layout_anchor="@id/rvTweets"
-        android:tint = "@android:color/holo_blue_dark"
 
         app:layout_anchorGravity="bottom|right|end" />
 </android.support.design.widget.CoordinatorLayout>
