@@ -172,9 +172,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             if (tweet.getFavoriteCount() > 0){
                 tvFavoriteCount.setText(Integer.toString(tweet.getFavoriteCount()));
             }
+            else
+                tvFavoriteCount.setText("");
             //image media
             if(tweet.getMediaType() == 0){
                 ivImage.setVisibility(View.VISIBLE);
+
                 vvVideo.setVisibility(View.GONE);
                 ivImage.setImageResource(android.R.color.transparent);
                 Glide.with(getContext()).load(tweet.getImageUrl()).into(ivImage);
@@ -190,6 +193,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 vvVideo.start();
 
             }
+
             else{
                 ivImage.setVisibility(View.GONE);
                 vvVideo.setVisibility(View.GONE);
