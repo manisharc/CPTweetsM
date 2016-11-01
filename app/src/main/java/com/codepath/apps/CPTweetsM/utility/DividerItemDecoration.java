@@ -1,4 +1,4 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.utility;
 
 import android.content.Context;
 import android.content.res.TypedArray;

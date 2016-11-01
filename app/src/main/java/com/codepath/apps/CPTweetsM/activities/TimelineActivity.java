@@ -13,11 +13,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.codepath.apps.CPTweetsM.DividerItemDecoration;
-import com.codepath.apps.CPTweetsM.EndlessRecyclerViewScrollListener;
-import com.codepath.apps.CPTweetsM.ItemClickSupport;
+import com.codepath.apps.CPTweetsM.utility.DividerItemDecoration;
+import com.codepath.apps.CPTweetsM.utility.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.CPTweetsM.utility.ItemClickSupport;
 import com.codepath.apps.CPTweetsM.R;
-import com.codepath.apps.CPTweetsM.TweetDatabase;
+import com.codepath.apps.CPTweetsM.database.TweetDatabase;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.databinding.ActivityTimelineBinding;

@@ -1,4 +1,4 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.utility;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;

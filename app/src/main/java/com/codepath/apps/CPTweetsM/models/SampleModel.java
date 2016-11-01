@@ -1,6 +1,6 @@
 package com.codepath.apps.CPTweetsM.models;
 
-import com.codepath.apps.CPTweetsM.MyDatabase;
+import com.codepath.apps.CPTweetsM.database.MyDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;

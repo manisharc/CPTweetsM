@@ -3,7 +3,7 @@ package com.codepath.apps.CPTweetsM.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.codepath.apps.CPTweetsM.TweetDatabase;
+import com.codepath.apps.CPTweetsM.database.TweetDatabase;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;

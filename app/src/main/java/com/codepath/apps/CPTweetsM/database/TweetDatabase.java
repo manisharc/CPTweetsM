@@ -1,4 +1,4 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.database;
 
 import com.raizlabs.android.dbflow.annotation.Database;
 

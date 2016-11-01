@@ -1,7 +1,9 @@
-package com.codepath.apps.CPTweetsM;
+package com.codepath.apps.CPTweetsM.utility;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.codepath.apps.CPTweetsM.R;
 
 public class ItemClickSupport {
     private final RecyclerView mRecyclerView;
