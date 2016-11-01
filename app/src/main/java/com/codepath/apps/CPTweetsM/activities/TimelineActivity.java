@@ -1,6 +1,7 @@
 package com.codepath.apps.CPTweetsM.activities;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +20,7 @@ import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.TweetDatabase;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
+import com.codepath.apps.CPTweetsM.databinding.ActivityTimelineBinding;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.models.Tweet_Table;
@@ -45,6 +47,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class TimelineActivity extends AppCompatActivity implements ComposeTweetFragment.ComposeTweetDialogListener {
 
+    private ActivityTimelineBinding binding;
     private TwitterClient client;
     private LinkedList<Tweet> tweets;
     private TweetsAdapter adapter;
@@ -57,14 +60,13 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setTitle("");
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+
         client = TwitterApplication.getRestClient(); //singleton client
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
@@ -84,8 +86,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     }
 
     public void setupViews(){
-        rvTweets = (RecyclerView) findViewById(R.id.rvTweets);
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        rvTweets = binding.rvTweets;
+        swipeContainer = binding.swipeContainer;
         tweets = new LinkedList<Tweet>();
         adapter = new TweetsAdapter(this, tweets);
         rvTweets.setAdapter(adapter);
@@ -103,7 +105,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabCompose);
+        FloatingActionButton fab = binding.fabCompose;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -1,5 +1,6 @@
 package com.codepath.apps.CPTweetsM.activities;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.databinding.ActivityTweetDetailBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 
 /**
@@ -15,23 +17,24 @@ import com.codepath.apps.CPTweetsM.models.Tweet;
  */
 public class TweetDetailActivity extends AppCompatActivity {
 
+    private ActivityTweetDetailBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tweet_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_tweet_detail);
 
         Tweet tweet = (Tweet) getIntent().getParcelableExtra("tweet");
         if(tweet != null) {
-            ImageView ivProfileImage = (ImageView) findViewById(R.id.ivProfileImage);
-            TextView tvName = (TextView) findViewById(R.id.tvName);
-            TextView tvUserName = (TextView) findViewById(R.id.tvUserName);
-            TextView tvBody = (TextView) findViewById(R.id.tvBody);
-            TextView tvCreatedTime = (TextView) findViewById(R.id.tvCreatedTime);
-            ImageView ivImage = (ImageView) findViewById(R.id.ivImage);
-            TextView tvFavoriteCount = (TextView) findViewById(R.id.tvFavoriteCount);
-            TextView tvLikes = (TextView) findViewById(R.id.tvLikes);
-            TextView tvRetweetCount = (TextView) findViewById(R.id.tvRetweetCount);
-            TextView tvRetweet = (TextView) findViewById(R.id.tvRetweet);
+            ImageView ivProfileImage = binding.ivProfileImage;
+            TextView tvName = binding.tvName;
+            TextView tvUserName = binding.tvUserName;
+            TextView tvBody = binding.tvBody;
+            TextView tvCreatedTime =binding.tvCreatedTime;
+            ImageView ivImage =binding.ivImage;
+            TextView tvFavoriteCount = binding.tvFavoriteCount;
+            TextView tvLikes = binding.tvLikes;
+            TextView tvRetweetCount = binding.tvRetweetCount;
+            TextView tvRetweet = binding.tvRetweet;
 
             tvName.setText(tweet.getUser().getName());
             tvUserName.setText(tweet.getUser().getScreenName());

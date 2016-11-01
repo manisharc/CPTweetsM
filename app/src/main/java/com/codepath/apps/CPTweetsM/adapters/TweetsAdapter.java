@@ -1,6 +1,8 @@
 package com.codepath.apps.CPTweetsM.adapters;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.databinding.ItemTweetBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 
 import java.util.List;
@@ -21,7 +24,6 @@ import java.util.List;
  * Created by chmanish on 10/27/16.
  */
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
-
 
     // Store a member variable for the articles
     private List<Tweet> mTweets;
@@ -51,6 +53,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        private ItemTweetBinding binding;
         private TextView tvUserName;
         private TextView tvBody;
         private TextView tvName;
@@ -68,17 +71,18 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             // Stores the itemView in a public final member variable that can be used
             // to access the context from any ViewHolder instance.
             super(itemView);
-            ivProfileImage = (ImageView) itemView.findViewById(R.id.ivProfileImage);
-            tvName = (TextView) itemView.findViewById(R.id.tvName);
-            tvUserName = (TextView) itemView.findViewById(R.id.tvUserName);
-            tvBody = (TextView) itemView.findViewById(R.id.tvBody);
-            tvCreatedTime = (TextView) itemView.findViewById(R.id.tvCreatedTime);
-            ivImage = (ImageView) itemView.findViewById(R.id.ivImage);
-            vvVideo = (VideoView) itemView.findViewById(R.id.vvVideo);
-            tvFavoriteCount = (TextView) itemView.findViewById(R.id.tvFavoriteCount);
-            ivFavorite = (ImageView) itemView.findViewById(R.id.ivFavorite);
+            binding = DataBindingUtil.bind(itemView);
+            ivProfileImage = binding.ivProfileImage;
+            tvName = binding.tvName;
+            tvUserName = binding.tvUserName;
+            tvBody = binding.tvBody;
+            tvCreatedTime = binding.tvCreatedTime;
+            ivImage = binding.ivImage;
+            vvVideo = binding.vvVideo;
+            tvFavoriteCount = binding.tvFavoriteCount;
+            ivFavorite = binding.ivFavorite;
 
-            ibReplyToTweet = (ImageButton) itemView.findViewById(R.id.btnReply);
+            ibReplyToTweet = binding.btnReply;
             // Setup the click listener for the item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -106,6 +110,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 }
             });
 
+        }
+
+        public ViewDataBinding getBinding() {
+            return binding;
         }
     }
 

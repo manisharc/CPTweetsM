@@ -1,6 +1,7 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
+import com.codepath.apps.CPTweetsM.databinding.FragmentComposeTweetBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -38,6 +40,7 @@ import cz.msebera.android.httpclient.Header;
  */
 public class ComposeTweetFragment extends DialogFragment {
 
+    private FragmentComposeTweetBinding binding;
     private TwitterClient client;
     private EditText etTweet;
     private Button btnTweet;
@@ -73,7 +76,13 @@ public class ComposeTweetFragment extends DialogFragment {
         client = TwitterApplication.getRestClient(); //singleton client
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        return inflater.inflate(R.layout.fragment_compose_tweet, container);
+
+
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_compose_tweet, container, false);
+        View view = binding.getRoot();
+        return view;
+        //return inflater.inflate(R.layout.fragment_compose_tweet, container);
     }
 
     private void showAlertDialog() {
@@ -85,11 +94,11 @@ public class ComposeTweetFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Get fields from view
-        etTweet = (EditText) view.findViewById(R.id.etTweet);
-        tvChar = (TextView) view.findViewById(R.id.tvChar);
-        btnTweet = (Button) view.findViewById(R.id.btnTweet);
-        btnClose = (ImageButton) view.findViewById(R.id.btnClose);
+        // Get fields from binding
+        etTweet = binding.etTweet;
+        tvChar = binding.tvChar;
+        btnTweet = binding.btnTweet;
+        btnClose = binding.btnClose;
 
         if(replyTweet != null){
             btnTweet.setText("Reply");
