@@ -107,6 +107,8 @@ public class ComposeTweetFragment extends DialogFragment {
             etTweet.setSelection((etTweet.getText().length()));
             etTweet.setCursorVisible(true);
             in_reply_to_status_id = Long.toString(replyTweet.getUid());
+            mCharLeft -= (etTweet.getText().length());
+            tvChar.setText(Integer.toString(mCharLeft));
 
         }
 

@@ -74,8 +74,8 @@
 
         <VideoView
             android:id="@+id/vvVideo"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
+            android:layout_width="320px"
+            android:layout_height="240px"
             android:layout_marginTop="5dp"
             android:layout_below="@+id/tvBody"
             android:layout_toRightOf="@+id/ivProfileImage"

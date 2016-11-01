@@ -32,10 +32,13 @@ public class Tweet extends BaseModel implements Parcelable {
     private User user;
     @Column
     private String createdAt;
-
+    @Column
     private boolean favorited;
-
+    @Column
     private int favoriteCount;
+    @Column
+    private int retweetCount;
+
     // Not storing to the database because when offline you cant access anyway
     private int mediaType = -1;
     private static int MEDIA_TYPE_PHOTO = 0;
@@ -48,12 +51,9 @@ public class Tweet extends BaseModel implements Parcelable {
         return retweetCount;
     }
 
-    public void setReTweetCount(int retweetCount) {
+    public void setRetweetCount(int retweetCount) {
         this.retweetCount = retweetCount;
     }
-
-    private int retweetCount;
-
 
     public boolean isFavorited() {
         return favorited;

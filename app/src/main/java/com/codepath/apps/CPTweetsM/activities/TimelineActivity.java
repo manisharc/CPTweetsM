@@ -75,6 +75,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
             // Retrieve from the network
             populateTimeline(false, true);
         else {
+            Toast.makeText(getApplicationContext(), "Cannot retrieve tweets, since you are offline!", Toast.LENGTH_LONG).show();
             //Retrieve from the database
             int curSize = adapter.getItemCount();
             //get from database
@@ -171,11 +172,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
 
             }
         });
-
-
-
-
-
     }
 
     @Override
