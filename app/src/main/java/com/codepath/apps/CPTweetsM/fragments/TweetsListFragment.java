@@ -36,7 +36,8 @@ public class TweetsListFragment extends Fragment  {
     private TwitterClient client;
     public LinkedList<Tweet> tweets;
     public TweetsAdapter adapter;
-    public static long max_id = 0;
+    public static long max_id_home = 0;
+    public static long max_id_mentions = 0;
     protected SwipeRefreshLayout swipeContainer;
     private ImageButton ibReplyToTweet;
     protected RecyclerView rvTweets;
@@ -114,7 +115,8 @@ public class TweetsListFragment extends Fragment  {
                     tweets.clear();
                     adapter.notifyItemRangeRemoved(0, size);
                     //Clear database
-                    max_id = 0;
+                    max_id_home = 0;
+                    max_id_mentions = 0;
                     populateTimeline(true, false);
                 }
                 else {

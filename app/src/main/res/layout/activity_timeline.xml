@@ -4,16 +4,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/main_content"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <fragment
+        <!--<fragment
             android:name="com.codepath.apps.CPTweetsM.fragments.HomeTimelineFragment"
             android:id="@+id/fooFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout="@layout/fragment_tweets_list" />
+            tools:layout="@layout/fragment_tweets_list" /> -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.astuetz.PagerSlidingTabStrip
+                android:id="@+id/tabs"
+                app:pstsShouldExpand="true"
+                app:pstsTextAllCaps="true"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_below="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white" />
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 </layout>

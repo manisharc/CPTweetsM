@@ -3,10 +3,13 @@ package com.codepath.apps.CPTweetsM.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.adapters.TweetsPagerAdapter;
 import com.codepath.apps.CPTweetsM.databinding.ActivityTimelineBinding;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
 import com.codepath.apps.CPTweetsM.fragments.HomeTimelineFragment;
@@ -34,8 +37,12 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
-        homeTimelineFragment = (HomeTimelineFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fooFragment);
+
+
+        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        tabStrip.setViewPager(vpPager);
 
 
     }
@@ -76,10 +83,12 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
 
     public void onFinishComposeDialog(Tweet newTweet) {
-
+        /*
+        homeTimelineFragment = (HomeTimelineFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fooFragment);
         if (homeTimelineFragment != null && homeTimelineFragment.isInLayout()) {
             homeTimelineFragment.addTweet(newTweet);
-        }
+        }*/
     }
 
 
