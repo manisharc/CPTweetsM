@@ -25,6 +25,40 @@ public class User extends BaseModel implements Parcelable {
     @Column
     private String profileImageUrl;
 
+    @Column
+    private int followersCount;
+
+    @Column
+    private int followingCount;
+
+    @Column
+    private String tagline;
+
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(int followingCount) {
+        this.followingCount = followingCount;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
+    }
+
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
@@ -68,6 +102,9 @@ public class User extends BaseModel implements Parcelable {
             u.profileImageUrl = jsonObject.getString("profile_image_url");
             u.uid = jsonObject.getLong("id");
             u.profileImageUrl = jsonObject.getString("profile_image_url_https");
+            u.tagline = jsonObject.getString("description");
+            u.followersCount = jsonObject.getInt("followers_count");
+            u.followingCount = jsonObject.getInt("friends_count");
         } catch (JSONException e) {
             e.printStackTrace();
         }

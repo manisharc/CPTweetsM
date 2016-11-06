@@ -7,19 +7,20 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<fragment
-            android:name="com.codepath.apps.CPTweetsM.fragments.HomeTimelineFragment"
-            android:id="@+id/fooFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/fragment_tweets_list" /> -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+        <!-- The ActionBar displayed at the top -->
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
             <com.astuetz.PagerSlidingTabStrip
                 android:id="@+id/tabs"
                 app:pstsShouldExpand="true"
                 app:pstsTextAllCaps="true"
+                android:layout_below="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp" />
 

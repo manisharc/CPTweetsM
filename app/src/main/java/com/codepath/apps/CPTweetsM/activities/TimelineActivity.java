@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -15,6 +18,7 @@ import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
 import com.codepath.apps.CPTweetsM.fragments.HomeTimelineFragment;
 import com.codepath.apps.CPTweetsM.fragments.TweetsListFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
+import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
 
 public class TimelineActivity extends AppCompatActivity implements TweetsListFragment.TweetsListActionListener, ComposeTweetFragment.ComposeTweetDialogListener {
@@ -22,29 +26,34 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     private ActivityTimelineBinding binding;
 
     private boolean isOnline = true;
-    HomeTimelineFragment homeTimelineFragment;
+    //HomeTimelineFragment homeTimelineFragment;
+    private Toolbar toolbar;
+    ViewPager vpPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         //binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setTitle("");
 
+
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
 
-
-        ViewPager vpPager = (ViewPager) findViewById(R.id.viewpager);
+        vpPager = (ViewPager) findViewById(R.id.viewpager);
         vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
-
-
     }
 
     @Override
@@ -69,7 +78,6 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
     }
 
-
     @Override
     public void onItemClickDetailView(Tweet tweet) {
         if (isOnline) {
@@ -81,6 +89,16 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
     }
 
+    @Override
+    public void onProfilePicClick(User user) {
+        if (isOnline) {
+            Intent i = new Intent(this, ProfileActivity.class);
+            i.putExtra("screen_name", user.getScreenName());
+            startActivity(i);
+        } else
+            Toast.makeText(getApplicationContext(), "You are offline. Can't see details.", Toast.LENGTH_LONG).show();
+
+    }
 
     public void onFinishComposeDialog(Tweet newTweet) {
         /*
@@ -89,11 +107,26 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         if (homeTimelineFragment != null && homeTimelineFragment.isInLayout()) {
             homeTimelineFragment.addTweet(newTweet);
         }*/
+        HomeTimelineFragment currentTimeline = (HomeTimelineFragment) getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
+                        vpPager.getCurrentItem());
+        if (vpPager.getCurrentItem() == 0 && currentTimeline != null) {
+            currentTimeline.addTweet(newTweet);
+        }
     }
 
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-
-
-
+    public void onProfileView(MenuItem mi){
+        // Launch the profile view
+        Intent i = new Intent(this, ProfileActivity.class);
+        startActivity(i);
+    }
 
 }

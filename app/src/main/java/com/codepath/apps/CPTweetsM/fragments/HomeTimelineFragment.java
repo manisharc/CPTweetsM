@@ -50,8 +50,6 @@ public class HomeTimelineFragment extends TweetsListFragment{
             adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);
         }
 
-
-
     }
 
     // Send an api request to get the timeline json

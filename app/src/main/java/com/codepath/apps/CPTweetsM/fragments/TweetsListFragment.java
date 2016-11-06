@@ -15,10 +15,10 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
-import com.codepath.apps.CPTweetsM.activities.TimelineActivity;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.databinding.FragmentComposeTweetBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
+import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.codepath.apps.CPTweetsM.utility.DividerItemDecoration;
@@ -38,6 +38,7 @@ public class TweetsListFragment extends Fragment  {
     public TweetsAdapter adapter;
     public static long max_id_home = 0;
     public static long max_id_mentions = 0;
+    public static long max_id_user_timeline = 0;
     protected SwipeRefreshLayout swipeContainer;
     private ImageButton ibReplyToTweet;
     protected RecyclerView rvTweets;
@@ -45,11 +46,11 @@ public class TweetsListFragment extends Fragment  {
     protected LinearLayoutManager linearLayoutManager;
     public boolean isOnline = true;
 
-
     public interface TweetsListActionListener {
         public void onAddNewTweet();
         public void onReplyTweet(Tweet tweet);
         public void onItemClickDetailView(Tweet tweet);
+        public void onProfilePicClick(User user);
 
     }
 
@@ -59,16 +60,14 @@ public class TweetsListFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup parent,
                              Bundle savedInstanceState) {
         //binding = DataBindingUtil.setContentView(getActivity(), R.layout.fragment_compose_tweet);
-
         return inflater.inflate(R.layout.fragment_tweets_list, parent, false);
-
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof TimelineActivity) {
-            actionListener = (TimelineActivity)context;
+        if (context instanceof TweetsListActionListener) {
+            actionListener = (TweetsListActionListener)context;
         }
     }
 
@@ -79,7 +78,6 @@ public class TweetsListFragment extends Fragment  {
         setupViews(view);
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getContext());
-
     }
 
     public void setupViews(View view) {
@@ -104,6 +102,41 @@ public class TweetsListFragment extends Fragment  {
 
             }
         });
+
+          /* adds the reply click support */
+        adapter.setOnTweetClickListener(new TweetsAdapter.OnTweetClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if ( actionListener != null ) {
+                    actionListener.onReplyTweet(tweets.get(position));
+                }
+
+            }
+        });
+
+        /* profile picture click support */
+        adapter.setOnProfilePicClickListener(new TweetsAdapter.OnProfilePicClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if ( actionListener != null ) {
+                    actionListener.onProfilePicClick(tweets.get(position).getUser());
+                }
+
+            }
+        });
+
+        /* adds the row click support */
+        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
+                new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        if ( actionListener != null ) {
+                            actionListener.onItemClickDetailView(tweets.get(position));
+                        }
+
+                    }
+                }
+        );
 
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -132,34 +165,6 @@ public class TweetsListFragment extends Fragment  {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
-
-        adapter.setOnTweetClickListener(new TweetsAdapter.OnTweetClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if ( actionListener != null ) {
-                    actionListener.onReplyTweet(tweets.get(position));
-                }
-
-            }
-        });
-
-
-
-        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        if ( actionListener != null ) {
-                            actionListener.onItemClickDetailView(tweets.get(position));
-                        }
-
-                    }
-                }
-        );
-
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,13 +173,11 @@ public class TweetsListFragment extends Fragment  {
                 }
             }
         });
+
     }
 
     protected void populateTimeline(final boolean isRefresh, final boolean isFirstCall){
         // Overridden in HomeTimeline
     }
-
-
-
 
 }

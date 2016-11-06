@@ -1,10 +1,8 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
 import android.os.Bundle;
-import android.view.View;
 
 import com.codepath.apps.CPTweetsM.TwitterApplication;
-import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -14,10 +12,8 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by chmanish on 11/5/16.
- */
-public class MentionsTimelineFragment extends TweetsListFragment{
+public class UserTimelineFragment extends TweetsListFragment{
+
     private TwitterClient client;
 
     @Override
@@ -40,12 +36,20 @@ public class MentionsTimelineFragment extends TweetsListFragment{
         }
     }
 
+    public static UserTimelineFragment newInstance(String screenName) {
+        UserTimelineFragment userTimelineFragment = new UserTimelineFragment();
+        Bundle args = new Bundle();
+        args.putString("screenName", screenName);
+        userTimelineFragment.setArguments(args);
+        return userTimelineFragment;
+    }
     // Send an api request to get the timeline json
     // Fill the view by creating the tweet objects from the json
     @Override
     protected void populateTimeline(final boolean isRefresh, final boolean isFirstCall) {
         super.populateTimeline(isRefresh, isFirstCall);
-        client.getMentionsTimeline(new JsonHttpResponseHandler(){
+        String screenName = getArguments().getString("screenName");
+        client.getUserTimeline(new JsonHttpResponseHandler(){
             // Success
 
             @Override
@@ -63,20 +67,7 @@ public class MentionsTimelineFragment extends TweetsListFragment{
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
             }
-        }, max_id_mentions);
+        }, max_id_user_timeline,screenName );
     }
 
-    protected void setupOtherListeners(){
-        /* profile picture click support */
-        adapter.setOnProfilePicClickListener(new TweetsAdapter.OnProfilePicClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if ( actionListener != null ) {
-                    actionListener.onProfilePicClick(tweets.get(position).getUser());
-                }
-
-            }
-        });
-
-    }
 }
