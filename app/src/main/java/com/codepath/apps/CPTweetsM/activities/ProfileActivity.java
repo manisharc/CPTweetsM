@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,11 +29,17 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        client = TwitterApplication.getRestClient();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        client = TwitterApplication.getRestClient();
-
+        getSupportActionBar().setElevation(0);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setLogo(R.drawable.twitter);
+        //getSupportActionBar().setDisplayUseLogoEnabled(true);
         String screenName = getIntent().getStringExtra("screen_name");
+        TextView tvTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        tvTitle.setText(screenName);
+        tvTitle.setVisibility(View.VISIBLE);
 
         if (screenName == null) {
             client.getUserInfo(new JsonHttpResponseHandler() {
@@ -42,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
                     // My current user account's info
                     //if (user.getScreenName() != null)
                     //getSupportActionBar().setTitle(user.getScreenName());
+
                     populateProfileHeader(user);
                 }
             });
@@ -59,6 +67,8 @@ public class ProfileActivity extends AppCompatActivity {
             }, screenName);
 
         }
+
+
 
         if (savedInstanceState == null){
             UserTimelineFragment fragmentUserTimeline = UserTimelineFragment.newInstance(screenName);
@@ -82,8 +92,8 @@ public class ProfileActivity extends AppCompatActivity {
         Glide.with(this).load(user.getProfileImageUrl()).into(ivProfileImage);
         tvName.setText(user.getName());
         tvTagline.setText(user.getTagline());
-        tvFollowers.setText(user.getFollowersCount() + " Followers   ");
-        tvFollowing.setText(user.getFollowingCount() + " Following");
+        tvFollowers.setText(user.getFollowersCount() + " FOLLOWERS   ");
+        tvFollowing.setText(user.getFollowingCount() + " FOLLOWING");
 
 
     }

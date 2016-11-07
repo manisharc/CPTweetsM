@@ -1,6 +1,7 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.models.Tweet;
@@ -25,14 +26,8 @@ public class UserTimelineFragment extends TweetsListFragment{
             // Retrieve from the network
             populateTimeline(false, true);
         else {
-            /*
             Toast.makeText(getContext(), "Cannot retrieve tweets, since you are offline!", Toast.LENGTH_LONG).show();
-            //Retrieve from the database
-            int curSize = adapter.getItemCount();
-            //get from database
-            List<Tweet> tweetsFromDb = getAllTweetsFromDatabase();
-            tweets.addAll(tweetsFromDb);
-            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);*/
+
         }
     }
 
@@ -56,7 +51,7 @@ public class UserTimelineFragment extends TweetsListFragment{
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 int curSize = adapter.getItemCount();
                 tweets.addAll(Tweet.fromJSONArray(response));
-                max_id_mentions = tweets.get(tweets.size()-1).getUid();
+                max_id_user_timeline = tweets.get(tweets.size()-1).getUid();
 
                 adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
                 if (isRefresh)

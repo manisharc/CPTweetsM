@@ -10,6 +10,7 @@
         <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:scaleType="fitXY"
             android:id="@+id/ivProfileImage"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="false"

@@ -1,10 +1,9 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
 import android.os.Bundle;
-import android.view.View;
+import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.TwitterApplication;
-import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,14 +28,8 @@ public class MentionsTimelineFragment extends TweetsListFragment{
             // Retrieve from the network
             populateTimeline(false, true);
         else {
-            /*
-            Toast.makeText(getContext(), "Cannot retrieve tweets, since you are offline!", Toast.LENGTH_LONG).show();
-            //Retrieve from the database
-            int curSize = adapter.getItemCount();
-            //get from database
-            List<Tweet> tweetsFromDb = getAllTweetsFromDatabase();
-            tweets.addAll(tweetsFromDb);
-            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);*/
+
+            Toast.makeText(getContext(), "Cannot retrieve mentions, since you are offline!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -66,17 +59,4 @@ public class MentionsTimelineFragment extends TweetsListFragment{
         }, max_id_mentions);
     }
 
-    protected void setupOtherListeners(){
-        /* profile picture click support */
-        adapter.setOnProfilePicClickListener(new TweetsAdapter.OnProfilePicClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if ( actionListener != null ) {
-                    actionListener.onProfilePicClick(tweets.get(position).getUser());
-                }
-
-            }
-        });
-
-    }
 }

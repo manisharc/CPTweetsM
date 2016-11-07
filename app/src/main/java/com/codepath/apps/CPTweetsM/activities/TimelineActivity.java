@@ -7,11 +7,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
+import com.codepath.apps.CPTweetsM.TwitterApplication;
 import com.codepath.apps.CPTweetsM.adapters.TweetsPagerAdapter;
 import com.codepath.apps.CPTweetsM.databinding.ActivityTimelineBinding;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
@@ -20,21 +23,29 @@ import com.codepath.apps.CPTweetsM.fragments.TweetsListFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
+import com.codepath.apps.CPTweetsM.network.TwitterClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class TimelineActivity extends AppCompatActivity implements TweetsListFragment.TweetsListActionListener, ComposeTweetFragment.ComposeTweetDialogListener {
 
     private ActivityTimelineBinding binding;
-
+    TwitterClient client;
     private boolean isOnline = true;
-    //HomeTimelineFragment homeTimelineFragment;
     private Toolbar toolbar;
     ViewPager vpPager;
+    User currentUser;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        client = TwitterApplication.getRestClient();
         //binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -45,6 +56,8 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setTitle("");
+
+        getCurrentUser();
 
 
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
@@ -101,12 +114,7 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     }
 
     public void onFinishComposeDialog(Tweet newTweet) {
-        /*
-        homeTimelineFragment = (HomeTimelineFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fooFragment);
-        if (homeTimelineFragment != null && homeTimelineFragment.isInLayout()) {
-            homeTimelineFragment.addTweet(newTweet);
-        }*/
+
         HomeTimelineFragment currentTimeline = (HomeTimelineFragment) getSupportFragmentManager()
                 .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
                         vpPager.getCurrentItem());
@@ -123,10 +131,25 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         return true;
     }
 
-    public void onProfileView(MenuItem mi){
-        // Launch the profile view
-        Intent i = new Intent(this, ProfileActivity.class);
-        startActivity(i);
+    public void getCurrentUser(){
+        client.getUserInfo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJSON(response);
+                ImageView profileView = (ImageView) toolbar.findViewById(R.id.miProfile);
+                Glide.with(getApplicationContext()).load(currentUser.getProfileImageUrl())
+                        .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                        .into(profileView);
+            }
+        });
     }
 
+
+    public void onProfileViewToolbar(View view) {
+        // Launch the profile view
+        Intent i = new Intent(this, ProfileActivity.class);
+        if (currentUser != null)
+            i.putExtra("screen_name", currentUser.getScreenName());
+        startActivity(i);
+    }
 }
