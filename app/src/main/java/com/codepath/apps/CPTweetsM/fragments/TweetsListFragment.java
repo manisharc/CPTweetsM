@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
@@ -37,7 +36,6 @@ public class TweetsListFragment extends Fragment  {
     public TweetsAdapter adapter;
     public long max_id = 0;
     protected SwipeRefreshLayout swipeContainer;
-    private ImageButton ibReplyToTweet;
     protected RecyclerView rvTweets;
     protected FloatingActionButton fab;
     protected LinearLayoutManager linearLayoutManager;
@@ -56,9 +54,6 @@ public class TweetsListFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        //return inflater.inflate(R.layout.fragment_tweets_list, container, false);
-
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_tweets_list, container, false);
         View view = binding.getRoot();
@@ -83,11 +78,8 @@ public class TweetsListFragment extends Fragment  {
 
     public void setupViews(View view) {
         rvTweets = binding.rvTweets;
-        //rvTweets = (RecyclerView)  view.findViewById(R.id.rvTweets);
         swipeContainer = binding.swipeContainer;
-        //swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         fab = binding.fabCompose;
-        //fab = (FloatingActionButton) view.findViewById(R.id.fabCompose);
         adapter = new TweetsAdapter(getContext(), tweets);
         rvTweets.setAdapter(adapter);
         linearLayoutManager = new LinearLayoutManager(getActivity());

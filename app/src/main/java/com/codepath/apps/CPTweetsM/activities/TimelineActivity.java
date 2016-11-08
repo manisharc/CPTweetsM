@@ -3,6 +3,7 @@ package com.codepath.apps.CPTweetsM.activities;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -49,25 +50,20 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         client = TwitterApplication.getRestClient();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
         // Set a Toolbar to replace the ActionBar.
-        //toolbar = (Toolbar)binding.toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         //toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setTitle("");
-
         getCurrentUser();
-
-
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
         vpPager = binding.viewpager;
         vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
-        PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        PagerSlidingTabStrip tabStrip = binding.tabs;
         tabStrip.setViewPager(vpPager);
     }
 
@@ -116,13 +112,18 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
     }
 
     public void onFinishComposeDialog(Tweet newTweet) {
-
-
-        HomeTimelineFragment currentTimeline = (HomeTimelineFragment) getSupportFragmentManager()
-                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + "0");
+        HomeTimelineFragment homeTimeline = (HomeTimelineFragment) getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
+                        "0");
+        Fragment currentTimeline = getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
+                        vpPager.getCurrentItem());
 
         if (currentTimeline != null) {
-            currentTimeline.addTweet(newTweet);
+            if (!(currentTimeline instanceof HomeTimelineFragment)) {
+                vpPager.setCurrentItem(0);
+            }
+            homeTimeline.addTweet(newTweet);
         }
     }
 

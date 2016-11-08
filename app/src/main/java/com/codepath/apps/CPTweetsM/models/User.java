@@ -116,7 +116,11 @@ public class User extends BaseModel implements Parcelable {
             u.tagline = jsonObject.getString("description");
             u.followersCount = jsonObject.getInt("followers_count");
             u.followingCount = jsonObject.getInt("friends_count");
-            u.profileBannerUrl = jsonObject.getString("profile_background_image_url_https");
+            String profileBanner = jsonObject.getString("profile_background_image_url_https");
+            if (profileBanner.length() > 6)
+                u.profileBannerUrl = jsonObject.getString("profile_background_image_url_https");
+            else
+                u.profileBannerUrl = jsonObject.getString("profile_banner_url");
         } catch (JSONException e) {
             e.printStackTrace();
         }
