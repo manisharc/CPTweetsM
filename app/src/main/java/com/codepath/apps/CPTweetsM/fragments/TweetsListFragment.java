@@ -20,7 +20,6 @@ import com.codepath.apps.CPTweetsM.databinding.FragmentComposeTweetBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
-import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.codepath.apps.CPTweetsM.utility.DividerItemDecoration;
 import com.codepath.apps.CPTweetsM.utility.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.CPTweetsM.utility.ItemClickSupport;
@@ -33,12 +32,11 @@ import java.util.LinkedList;
 public class TweetsListFragment extends Fragment  {
 
     private FragmentComposeTweetBinding binding;
-    private TwitterClient client;
     public LinkedList<Tweet> tweets;
     public TweetsAdapter adapter;
-    public static long max_id_home = 0;
-    public static long max_id_mentions = 0;
-    public static long max_id_user_timeline = 0;
+    public long max_id = 0;
+    //public static long max_id_mentions = 0;
+    //public static long max_id_user_timeline = 0;
     protected SwipeRefreshLayout swipeContainer;
     private ImageButton ibReplyToTweet;
     protected RecyclerView rvTweets;
@@ -148,8 +146,7 @@ public class TweetsListFragment extends Fragment  {
                     tweets.clear();
                     adapter.notifyItemRangeRemoved(0, size);
                     //Clear database
-                    max_id_home = 0;
-                    max_id_mentions = 0;
+                    max_id = 0;
                     populateTimeline(true, false);
                 }
                 else {

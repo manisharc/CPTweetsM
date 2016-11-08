@@ -194,9 +194,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
             ivProfileImage.setImageResource(android.R.color.transparent);
             Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
-            if (tweet.isFavorited()){
+            /*if (tweet.isFavorited()){
                 ivFavorite.setImageResource(R.drawable.ic_favorite_red_900_18dp);
-            }
+            }*/
             if (tweet.getFavoriteCount() > 0){
                 tvFavoriteCount.setText(Integer.toString(tweet.getFavoriteCount()));
             }

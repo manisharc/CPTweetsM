@@ -1,6 +1,7 @@
 package com.codepath.apps.CPTweetsM.activities;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -46,9 +47,11 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         client = TwitterApplication.getRestClient();
-        //binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
         // Set a Toolbar to replace the ActionBar.
+        //toolbar = (Toolbar)binding.toolbar;
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -62,8 +65,7 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
-
-        vpPager = (ViewPager) findViewById(R.id.viewpager);
+        vpPager = binding.viewpager;
         vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
         PagerSlidingTabStrip tabStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabStrip.setViewPager(vpPager);
@@ -115,10 +117,11 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
     public void onFinishComposeDialog(Tweet newTweet) {
 
+        String vpItem = Integer.toString(vpPager.getCurrentItem());
         HomeTimelineFragment currentTimeline = (HomeTimelineFragment) getSupportFragmentManager()
-                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
-                        vpPager.getCurrentItem());
-        if (vpPager.getCurrentItem() == 0 && currentTimeline != null) {
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + "0");
+
+        if (currentTimeline != null) {
             currentTimeline.addTweet(newTweet);
         }
     }

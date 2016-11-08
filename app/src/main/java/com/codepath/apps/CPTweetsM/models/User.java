@@ -25,6 +25,17 @@ public class User extends BaseModel implements Parcelable {
     @Column
     private String profileImageUrl;
 
+    public String getProfileBannerUrl() {
+        return profileBannerUrl;
+    }
+
+    public void setProfileBannerUrl(String profileBannerUrl) {
+        this.profileBannerUrl = profileBannerUrl;
+    }
+
+    @Column
+    private String profileBannerUrl;
+
     @Column
     private int followersCount;
 
@@ -105,11 +116,15 @@ public class User extends BaseModel implements Parcelable {
             u.tagline = jsonObject.getString("description");
             u.followersCount = jsonObject.getInt("followers_count");
             u.followingCount = jsonObject.getInt("friends_count");
+            u.profileBannerUrl = jsonObject.getString("profile_background_image_url_https");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return u;
+    }
+
+    public User() {
     }
 
     @Override
@@ -123,9 +138,10 @@ public class User extends BaseModel implements Parcelable {
         dest.writeLong(this.uid);
         dest.writeString(this.screenName);
         dest.writeString(this.profileImageUrl);
-    }
-
-    public User() {
+        dest.writeString(this.profileBannerUrl);
+        dest.writeInt(this.followersCount);
+        dest.writeInt(this.followingCount);
+        dest.writeString(this.tagline);
     }
 
     protected User(Parcel in) {
@@ -133,9 +149,13 @@ public class User extends BaseModel implements Parcelable {
         this.uid = in.readLong();
         this.screenName = in.readString();
         this.profileImageUrl = in.readString();
+        this.profileBannerUrl = in.readString();
+        this.followersCount = in.readInt();
+        this.followingCount = in.readInt();
+        this.tagline = in.readString();
     }
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel source) {
             return new User(source);

@@ -51,7 +51,7 @@ public class UserTimelineFragment extends TweetsListFragment{
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 int curSize = adapter.getItemCount();
                 tweets.addAll(Tweet.fromJSONArray(response));
-                max_id_user_timeline = tweets.get(tweets.size()-1).getUid();
+                max_id = tweets.get(tweets.size()-1).getUid();
 
                 adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
                 if (isRefresh)
@@ -62,7 +62,7 @@ public class UserTimelineFragment extends TweetsListFragment{
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
             }
-        }, max_id_user_timeline,screenName );
+        }, max_id,screenName );
     }
 
 }
