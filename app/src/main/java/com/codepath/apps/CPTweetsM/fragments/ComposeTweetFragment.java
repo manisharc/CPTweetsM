@@ -69,7 +69,6 @@ public class ComposeTweetFragment extends DialogFragment {
         void onFinishComposeDialog(Tweet newTweet);
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,9 +134,9 @@ public class ComposeTweetFragment extends DialogFragment {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         // File the Tweet structure from the information
-                        ComposeTweetDialogListener listener = (ComposeTweetDialogListener) getActivity();
                         newTweet = Tweet.fromJSON(response);
-                        listener.onFinishComposeDialog(newTweet);
+                        ComposeTweetDialogListener mListener = (ComposeTweetDialogListener) getActivity();
+                        mListener.onFinishComposeDialog(newTweet);
                         // Close the dialog and return back to the parent activity
                         dismiss();
                     }
@@ -166,9 +165,6 @@ public class ComposeTweetFragment extends DialogFragment {
 
             }
         });
-
-
-
 
         etTweet.addTextChangedListener(new TextWatcher()
         {

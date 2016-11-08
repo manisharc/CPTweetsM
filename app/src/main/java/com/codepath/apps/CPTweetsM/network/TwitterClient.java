@@ -51,6 +51,16 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().get(apiUrl, params, handler);
 	}
 
+	public void getMentionsTimeline(AsyncHttpResponseHandler handler, long max_id){
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		if (max_id != 0) {
+			params.put("max_id", max_id - 1);
+		}
+		getClient().get(apiUrl, params, handler);
+	}
+
 	public void postTweet(AsyncHttpResponseHandler handler, String tweetString, String in_reply_to_status_id){
 		String apiUrl = getApiUrl("statuses/update.json");
 		RequestParams params = new RequestParams();
@@ -60,6 +70,33 @@ public class TwitterClient extends OAuthBaseClient {
 		getClient().post(apiUrl, params, handler);
 
 	}
+
+	public void getUserTimeline(AsyncHttpResponseHandler handler, long max_id, String screenName){
+		String apiUrl = getApiUrl("statuses/user_timeline.json");
+		RequestParams params = new RequestParams();
+		params.put("count", 25);
+		if (max_id != 0) {
+			params.put("max_id", max_id - 1);
+		}
+		params.put("screen_name", screenName);
+		getClient().get(apiUrl, params, handler);
+	}
+
+	public void getUserInfo(AsyncHttpResponseHandler handler){
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		getClient().get(apiUrl, null, handler);
+
+	}
+
+	public void getOtherUserInfo(AsyncHttpResponseHandler handler, String screenName){
+		String apiUrl = getApiUrl("users/show.json");
+		RequestParams params = new RequestParams();
+		params.put("screen_name", screenName);
+		getClient().get(apiUrl, params, handler);
+
+	}
+
+
 
 	// Compose tweets
 

@@ -3,266 +3,157 @@ package com.codepath.apps.CPTweetsM.activities;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.codepath.apps.CPTweetsM.utility.DividerItemDecoration;
-import com.codepath.apps.CPTweetsM.utility.EndlessRecyclerViewScrollListener;
-import com.codepath.apps.CPTweetsM.utility.ItemClickSupport;
+import com.astuetz.PagerSlidingTabStrip;
+import com.bumptech.glide.Glide;
 import com.codepath.apps.CPTweetsM.R;
-import com.codepath.apps.CPTweetsM.database.TweetDatabase;
 import com.codepath.apps.CPTweetsM.TwitterApplication;
-import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
+import com.codepath.apps.CPTweetsM.adapters.TweetsPagerAdapter;
 import com.codepath.apps.CPTweetsM.databinding.ActivityTimelineBinding;
 import com.codepath.apps.CPTweetsM.fragments.ComposeTweetFragment;
+import com.codepath.apps.CPTweetsM.fragments.HomeTimelineFragment;
+import com.codepath.apps.CPTweetsM.fragments.TweetsListFragment;
 import com.codepath.apps.CPTweetsM.models.Tweet;
-import com.codepath.apps.CPTweetsM.models.Tweet_Table;
 import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
 import com.codepath.apps.CPTweetsM.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.raizlabs.android.dbflow.config.DatabaseDefinition;
-import com.raizlabs.android.dbflow.config.FlowManager;
-import com.raizlabs.android.dbflow.sql.language.Delete;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
-import com.raizlabs.android.dbflow.structure.database.DatabaseWrapper;
-import com.raizlabs.android.dbflow.structure.database.transaction.ITransaction;
-import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
-import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class TimelineActivity extends AppCompatActivity implements ComposeTweetFragment.ComposeTweetDialogListener {
+public class TimelineActivity extends AppCompatActivity implements TweetsListFragment.TweetsListActionListener, ComposeTweetFragment.ComposeTweetDialogListener {
 
     private ActivityTimelineBinding binding;
-    private TwitterClient client;
-    private LinkedList<Tweet> tweets;
-    private TweetsAdapter adapter;
-    public static long max_id = 0;
-    private SwipeRefreshLayout swipeContainer;
-    private ImageButton ibReplyToTweet;
-    private RecyclerView rvTweets;
+    TwitterClient client;
     private boolean isOnline = true;
+    private Toolbar toolbar;
+    ViewPager vpPager;
+    User currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_timeline);
+        client = TwitterApplication.getRestClient();
         binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setLogo(R.drawable.twitter);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         getSupportActionBar().setTitle("");
-
-        client = TwitterApplication.getRestClient(); //singleton client
+        getCurrentUser();
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
         isOnline = networkStatus.checkNetworkStatus(getApplicationContext());
-        setupViews();
-        if (isOnline)
-            // Retrieve from the network
-            populateTimeline(false, true);
-        else {
-            Toast.makeText(getApplicationContext(), "Cannot retrieve tweets, since you are offline!", Toast.LENGTH_LONG).show();
-            //Retrieve from the database
-            int curSize = adapter.getItemCount();
-            //get from database
-            List<Tweet> tweetsFromDb = getAllTweetsFromDatabase();
-            tweets.addAll(tweetsFromDb);
-            adapter.notifyItemRangeInserted(curSize, (tweetsFromDb.size())-1);
-        }
-
-    }
-
-    public void setupViews(){
-        rvTweets = binding.rvTweets;
-        swipeContainer = binding.swipeContainer;
-        tweets = new LinkedList<Tweet>();
-        adapter = new TweetsAdapter(this, tweets);
-        rvTweets.setAdapter(adapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rvTweets.setLayoutManager(linearLayoutManager);
-        rvTweets.addItemDecoration(
-                new DividerItemDecoration(this, R.drawable.divider));
-
-        rvTweets.addOnScrollListener(new EndlessRecyclerViewScrollListener(linearLayoutManager) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                if (isOnline)
-                    populateTimeline(false, false);
-
-            }
-        });
-
-        FloatingActionButton fab = binding.fabCompose;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isOnline) {
-                    FragmentManager fm = getSupportFragmentManager();
-                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(null);
-                    editNameDialogFragment.show(fm, "fragment_compose_tweet");
-                }
-                else
-                    Toast.makeText(getApplicationContext(), "You are offline. Can't update tweet", Toast.LENGTH_LONG).show();
-
-            }
-        });
-
-        // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Refresh list of tweets
-                if (isOnline) {
-                    int size = tweets.size();
-                    tweets.clear();
-                    adapter.notifyItemRangeRemoved(0, size);
-                    //Clear database
-                    max_id = 0;
-                    populateTimeline(true, false);
-                }
-                else {
-                    Toast.makeText(getApplicationContext(), "You are offline. Can't refresh tweets", Toast.LENGTH_LONG).show();
-
-
-                }
-            }
-        });
-        // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-        ItemClickSupport.addTo(rvTweets).setOnItemClickListener(
-                new ItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        Intent i = new Intent(getApplicationContext(), TweetDetailActivity.class);
-                        Tweet tweet = tweets.get(position);
-                        i.putExtra("tweet", tweet);
-                        startActivity(i);
-                    }
-                }
-        );
-
-        adapter.setOnTweetClickListener(new TweetsAdapter.OnTweetClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                if (isOnline) {
-                    FragmentManager fm = getSupportFragmentManager();
-                    ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(tweets.get(position));
-                    editNameDialogFragment.show(fm, "fragment_compose_tweet");
-                }
-                else
-                    Toast.makeText(getApplicationContext(), "You are offline. Can't reply to tweets", Toast.LENGTH_LONG).show();
-
-            }
-        });
+        vpPager = binding.viewpager;
+        vpPager.setAdapter(new TweetsPagerAdapter(getSupportFragmentManager()));
+        PagerSlidingTabStrip tabStrip = binding.tabs;
+        tabStrip.setViewPager(vpPager);
     }
 
     @Override
+    public void onAddNewTweet() {
+        if (isOnline) {
+            FragmentManager fm = getSupportFragmentManager();
+            ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(null);
+            editNameDialogFragment.show(fm, "fragment_compose_tweet");
+        } else
+            Toast.makeText(getApplicationContext(), "You are offline. Can't update tweet", Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void onReplyTweet(Tweet tweet) {
+        if (isOnline) {
+            FragmentManager fm = getSupportFragmentManager();
+            ComposeTweetFragment editNameDialogFragment = ComposeTweetFragment.newInstance(tweet);
+            editNameDialogFragment.show(fm, "fragment_compose_tweet");
+        } else
+            Toast.makeText(getApplicationContext(), "You are offline. Can't reply to tweets", Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void onItemClickDetailView(Tweet tweet) {
+        if (isOnline) {
+            Intent i = new Intent(getApplicationContext(), TweetDetailActivity.class);
+            i.putExtra("tweet", tweet);
+            startActivity(i);
+        } else
+            Toast.makeText(getApplicationContext(), "You are offline. Can't see details.", Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    public void onProfilePicClick(User user) {
+        if (isOnline) {
+            Intent i = new Intent(this, ProfileActivity.class);
+            i.putExtra("screen_name", user.getScreenName());
+            startActivity(i);
+        } else
+            Toast.makeText(getApplicationContext(), "You are offline. Can't see details.", Toast.LENGTH_LONG).show();
+
+    }
+
     public void onFinishComposeDialog(Tweet newTweet) {
-        tweets.addFirst(newTweet);
-        //Update database here
-        newTweet.save();
-        adapter.notifyItemInserted(0);
-        rvTweets.scrollToPosition(0);   // index 0 position
-    }
+        HomeTimelineFragment homeTimeline = (HomeTimelineFragment) getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
+                        "0");
+        Fragment currentTimeline = getSupportFragmentManager()
+                .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" +
+                        vpPager.getCurrentItem());
 
-
-    private void addToDataBase(){
-        FlowManager.getDatabase(TweetDatabase.class)
-                .beginTransactionAsync(new ProcessModelTransaction.Builder<>(
-                        new ProcessModelTransaction.ProcessModel<Tweet>() {
-                            @Override
-                            public void processModel(Tweet tweet) {
-                                User user = tweet.getUser();
-                                user.save();
-                                tweet.save();
-                            }
-                        }).addAll(tweets).build())  // add elements (can also handle multiple)
-                .error(new Transaction.Error() {
-                    @Override
-                    public void onError(Transaction transaction, Throwable error) {
-
-                    }
-                })
-                .success(new Transaction.Success() {
-                    @Override
-                    public void onSuccess(Transaction transaction) {
-
-                    }
-                }).build().execute();
-
-    }
-
-    private void deleteTables(){
-        DatabaseDefinition database = FlowManager.getDatabase(TweetDatabase.class);
-        Transaction transaction = database.beginTransactionAsync(new ITransaction() {
-            @Override
-            public void execute(DatabaseWrapper databaseWrapper) {
-                Delete.table(User.class);
-                Delete.table(Tweet.class);
+        if (currentTimeline != null) {
+            if (!(currentTimeline instanceof HomeTimelineFragment)) {
+                vpPager.setCurrentItem(0);
             }
-
-
-        }).build();
-        transaction.execute(); // execute
-        transaction.cancel();
-        // attempt to cancel before its run. If it's already ran, this call has no effect.
-
-
+            homeTimeline.addTweet(newTweet);
+        }
     }
 
-    private List<Tweet> getAllTweetsFromDatabase(){
-        // Order the return based on createdDate
-        List<Tweet> tweetList = SQLite.select().
-                from(Tweet.class).orderBy(Tweet_Table.uid, false).queryList();
-        return tweetList;
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
-    // Send an api request to get the timeline json
-    // Fill the view by creating the tweet objects from the json
-    private void populateTimeline(final boolean isRefresh, final boolean isFirstCall) {
-            client.getHomeTimeline(new JsonHttpResponseHandler(){
-                // Success
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    int curSize = adapter.getItemCount();
-                    tweets.addAll(Tweet.fromJSONArray(response));
-                    max_id = tweets.get(tweets.size()-1).getUid();
-
-                    //Update database here
-                    if (isFirstCall | isRefresh){
-                        deleteTables();
-
-                    }
-                    addToDataBase();
-                    adapter.notifyItemRangeInserted(curSize, (Tweet.fromJSONArray(response)).size());
-                    if (isRefresh)
-                        swipeContainer.setRefreshing(false);
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                }
-            }, max_id);
+    public void getCurrentUser(){
+        client.getUserInfo(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                currentUser = User.fromJSON(response);
+                ImageView profileView = (ImageView) toolbar.findViewById(R.id.miProfile);
+                Glide.with(getApplicationContext()).load(currentUser.getProfileImageUrl())
+                        .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                        .into(profileView);
+            }
+        });
     }
 
 
+    public void onProfileViewToolbar(View view) {
+        // Launch the profile view
+        Intent i = new Intent(this, ProfileActivity.class);
+        if (currentUser != null)
+            i.putExtra("screen_name", currentUser.getScreenName());
+        startActivity(i);
+    }
 }

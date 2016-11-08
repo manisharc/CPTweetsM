@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -29,8 +28,10 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     private List<Tweet> mTweets;
     // Store the context for easy access
     private Context mContext;
+
+
     // Define listener member variable
-    private static OnItemClickListener listener;
+    private OnItemClickListener listener;
     // Define the listener interface
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
@@ -41,7 +42,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     // Define listener member variable
-    private static OnTweetClickListener tweetListener;
+    private OnTweetClickListener tweetListener;
     // Define the listener interface
     public interface OnTweetClickListener {
         void onItemClick(View itemView, int position);
@@ -50,9 +51,22 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     public void setOnTweetClickListener(OnTweetClickListener listener) {
         this.tweetListener = listener;
     }
+
+    private OnProfilePicClickListener pictureListener;
+    // Define the listener interface
+    public interface OnProfilePicClickListener {
+        void onItemClick(View itemView, int position);
+    }
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnProfilePicClickListener(OnProfilePicClickListener listener) {
+        this.pictureListener = listener;
+    }
+
+
+
     // Provide a direct reference to each of the views within a data item
     // Used to cache the views within the item layout for fast access
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         private ItemTweetBinding binding;
         private TextView tvUserName;
         private TextView tvBody;
@@ -83,6 +97,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ivFavorite = binding.ivFavorite;
 
             ibReplyToTweet = binding.btnReply;
+
             // Setup the click listener for the item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -105,6 +120,19 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                         int position = getAdapterPosition();
                         if (tweetListener != null && position != RecyclerView.NO_POSITION) {
                             tweetListener.onItemClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (pictureListener != null) {
+                        int position = getAdapterPosition();
+                        if (pictureListener != null && position != RecyclerView.NO_POSITION) {
+                            pictureListener.onItemClick(itemView, position);
                         }
                     }
                 }
@@ -166,9 +194,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvCreatedTime.setText(tweet.getRelativeTimeAgo(tweet.getCreatedAt()));
             ivProfileImage.setImageResource(android.R.color.transparent);
             Glide.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
-            if (tweet.isFavorited()){
+            /*if (tweet.isFavorited()){
                 ivFavorite.setImageResource(R.drawable.ic_favorite_red_900_18dp);
-            }
+            }*/
             if (tweet.getFavoriteCount() > 0){
                 tvFavoriteCount.setText(Integer.toString(tweet.getFavoriteCount()));
             }
@@ -182,6 +210,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivImage.setImageResource(android.R.color.transparent);
                 Glide.with(getContext()).load(tweet.getImageUrl()).into(ivImage);
             } //video media
+            /*
             else if(tweet.getMediaType() == 1){
                 vvVideo.setVideoPath(tweet.getVideoUrl());
                 MediaController mediaController = new MediaController(getContext());
@@ -192,7 +221,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 vvVideo.requestFocus();
                 vvVideo.start();
 
-            }
+            }*/
 
             else{
                 ivImage.setVisibility(View.GONE);

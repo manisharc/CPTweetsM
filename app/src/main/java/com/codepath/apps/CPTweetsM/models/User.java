@@ -25,6 +25,51 @@ public class User extends BaseModel implements Parcelable {
     @Column
     private String profileImageUrl;
 
+    public String getProfileBannerUrl() {
+        return profileBannerUrl;
+    }
+
+    public void setProfileBannerUrl(String profileBannerUrl) {
+        this.profileBannerUrl = profileBannerUrl;
+    }
+
+    @Column
+    private String profileBannerUrl;
+
+    @Column
+    private int followersCount;
+
+    @Column
+    private int followingCount;
+
+    @Column
+    private String tagline;
+
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(int followingCount) {
+        this.followingCount = followingCount;
+    }
+
+    public String getTagline() {
+        return tagline;
+    }
+
+    public void setTagline(String tagline) {
+        this.tagline = tagline;
+    }
+
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
@@ -68,11 +113,22 @@ public class User extends BaseModel implements Parcelable {
             u.profileImageUrl = jsonObject.getString("profile_image_url");
             u.uid = jsonObject.getLong("id");
             u.profileImageUrl = jsonObject.getString("profile_image_url_https");
+            u.tagline = jsonObject.getString("description");
+            u.followersCount = jsonObject.getInt("followers_count");
+            u.followingCount = jsonObject.getInt("friends_count");
+            String profileBanner = jsonObject.getString("profile_background_image_url_https");
+            if (profileBanner.length() > 6)
+                u.profileBannerUrl = jsonObject.getString("profile_background_image_url_https");
+            else
+                u.profileBannerUrl = jsonObject.getString("profile_banner_url");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return u;
+    }
+
+    public User() {
     }
 
     @Override
@@ -86,9 +142,10 @@ public class User extends BaseModel implements Parcelable {
         dest.writeLong(this.uid);
         dest.writeString(this.screenName);
         dest.writeString(this.profileImageUrl);
-    }
-
-    public User() {
+        dest.writeString(this.profileBannerUrl);
+        dest.writeInt(this.followersCount);
+        dest.writeInt(this.followingCount);
+        dest.writeString(this.tagline);
     }
 
     protected User(Parcel in) {
@@ -96,9 +153,13 @@ public class User extends BaseModel implements Parcelable {
         this.uid = in.readLong();
         this.screenName = in.readString();
         this.profileImageUrl = in.readString();
+        this.profileBannerUrl = in.readString();
+        this.followersCount = in.readInt();
+        this.followingCount = in.readInt();
+        this.tagline = in.readString();
     }
 
-    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+    public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel source) {
             return new User(source);
