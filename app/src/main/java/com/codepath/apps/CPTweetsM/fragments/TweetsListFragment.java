@@ -1,6 +1,7 @@
 package com.codepath.apps.CPTweetsM.fragments;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 
 import com.codepath.apps.CPTweetsM.R;
 import com.codepath.apps.CPTweetsM.adapters.TweetsAdapter;
-import com.codepath.apps.CPTweetsM.databinding.FragmentComposeTweetBinding;
+import com.codepath.apps.CPTweetsM.databinding.FragmentTweetsListBinding;
 import com.codepath.apps.CPTweetsM.models.Tweet;
 import com.codepath.apps.CPTweetsM.models.User;
 import com.codepath.apps.CPTweetsM.network.NetworkStatus;
@@ -31,12 +32,10 @@ import java.util.LinkedList;
  */
 public class TweetsListFragment extends Fragment  {
 
-    private FragmentComposeTweetBinding binding;
+    private FragmentTweetsListBinding binding;
     public LinkedList<Tweet> tweets;
     public TweetsAdapter adapter;
     public long max_id = 0;
-    //public static long max_id_mentions = 0;
-    //public static long max_id_user_timeline = 0;
     protected SwipeRefreshLayout swipeContainer;
     private ImageButton ibReplyToTweet;
     protected RecyclerView rvTweets;
@@ -55,10 +54,15 @@ public class TweetsListFragment extends Fragment  {
     public TweetsListActionListener actionListener;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //binding = DataBindingUtil.setContentView(getActivity(), R.layout.fragment_compose_tweet);
-        return inflater.inflate(R.layout.fragment_tweets_list, parent, false);
+
+        //return inflater.inflate(R.layout.fragment_tweets_list, container, false);
+
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_tweets_list, container, false);
+        View view = binding.getRoot();
+        return view;
     }
 
     @Override
@@ -71,7 +75,6 @@ public class TweetsListFragment extends Fragment  {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        rvTweets = (RecyclerView) view.findViewById(R.id.rvTweets);
         tweets = new LinkedList<Tweet>();
         setupViews(view);
         NetworkStatus networkStatus = NetworkStatus.getSharedInstance();
@@ -79,12 +82,12 @@ public class TweetsListFragment extends Fragment  {
     }
 
     public void setupViews(View view) {
-        //rvTweets = binding.rvTweets;
-        rvTweets = (RecyclerView)  view.findViewById(R.id.rvTweets);
-        //swipeContainer = binding.swipeContainer;
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        //FloatingActionButton fab = binding.fabCompose;
-        fab = (FloatingActionButton) view.findViewById(R.id.fabCompose);
+        rvTweets = binding.rvTweets;
+        //rvTweets = (RecyclerView)  view.findViewById(R.id.rvTweets);
+        swipeContainer = binding.swipeContainer;
+        //swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        fab = binding.fabCompose;
+        //fab = (FloatingActionButton) view.findViewById(R.id.fabCompose);
         adapter = new TweetsAdapter(getContext(), tweets);
         rvTweets.setAdapter(adapter);
         linearLayoutManager = new LinearLayoutManager(getActivity());

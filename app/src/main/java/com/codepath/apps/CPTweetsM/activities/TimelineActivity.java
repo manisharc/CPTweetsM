@@ -117,7 +117,7 @@ public class TimelineActivity extends AppCompatActivity implements TweetsListFra
 
     public void onFinishComposeDialog(Tweet newTweet) {
 
-        String vpItem = Integer.toString(vpPager.getCurrentItem());
+
         HomeTimelineFragment currentTimeline = (HomeTimelineFragment) getSupportFragmentManager()
                 .findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + "0");
 
